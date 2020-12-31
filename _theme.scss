@@ -1,0 +1,57 @@
+$variants-theme-light: (
+  0: #eaf2f4,
+  1: #212121,
+  2: #1460AA,
+  3: #008000,
+  4: #F22613,
+  5: #923026,
+  6: #7462E0,
+  7: #D47500,
+  8: #B8860B,
+  9: #6B8E23,
+  10: #16A085,
+  11: #5C97BF,
+  12: #3498DB,
+  13: #D25299,
+  14: #808080,
+  15: #708090,
+) !default;
+
+$variants-theme-dark: (
+  0: #212121,
+  1: #eaf2f4,
+  2: #4183d7,
+  3: #28a228,
+  4: #ef4836,
+  5: #94481d,
+  6: #bf55ec,
+  7: #f39c12,
+  8: #f2ca27,
+  9: #abe338,
+  10: #00a4a6,
+  11: #81cfe0,
+  12: #1e90ff,
+  13: #dda0dd,
+  14: #bdc3c7,
+  15: #95a5a6,
+) !default;
+
+@mixin --use-theme {
+  $themes: (light, dark);
+
+  @each $theme in $themes {
+    @if & {
+      [data-theme="#{'' + $theme}"] & { @content($theme); }
+    } @else {
+      [data-theme="#{'' + $theme}"] { @content($theme); }
+    }
+  }
+}
+
+@mixin --use-theme-custom($theme) {
+  @if & {
+    [data-theme="#{'' + $theme}"] & { @content; }
+  } @else {
+    [data-theme="#{'' + $theme}"] { @content; }
+  }
+}

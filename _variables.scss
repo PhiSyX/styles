@@ -1,0 +1,14 @@
+:root {
+  --font-size: 16px;
+  --space: clamp(.25rem, 2.2vw, .5rem);
+}
+
+@include --use-theme using ($type) {
+  @if $type == dark {
+    --text_color: #eaf2f4;
+  }
+
+  @if $type == light {
+    --text_color: #212121;
+  }
+}

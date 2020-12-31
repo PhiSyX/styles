@@ -1,0 +1,69 @@
+@mixin --use-scroll {
+  :root {
+    --scrollbar_size: 10px;
+  }
+
+  ::-webkit-scrollbar {
+    width: var(--scrollbar_size);
+    height: var(--scrollbar_size);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: calc(var(--scrollbar_size) / 3) solid transparent;
+    background: var(--scrollbar_bg);
+  }
+
+  .scroll {
+    width: 100%;
+    height: 100%;
+
+    overflow: auto !important;
+
+    &.scroll\[hidden\] {
+      margin-right: -1px !important;
+      margin-bottom: -1px !important;
+    }
+  }
+
+  .scroll\[hidden\] {
+    &::-webkit-scrollbar {
+      width: 0px !important;
+      height: 0px !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: 0 !important;
+      background: transparent !important;
+    }
+  }
+
+  .scroll\:x {
+    width: 100%;
+
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+
+    &.scroll\[hidden\] {
+      margin-bottom: -1px !important;
+    }
+  }
+
+  .scroll\:y {
+    height: 100%;
+
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+
+    &.scroll\[hidden\] {
+      margin-right: -1px !important;
+    }
+  }
+
+  .scroll\:hidden {
+    overflow: hidden;
+  }
+}

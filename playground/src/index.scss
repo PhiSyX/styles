@@ -1,0 +1,88 @@
+@import "../../theme";
+@import "../../variables";
+
+@import "../../bases";
+
+@import "../../colors";
+@import "../../scroll";
+@import "../../background";
+
+@include --use-all-base;
+
+@include --use-scroll;
+@include --use-background;
+
+:root {
+  --playground_scrollbar_box: padding-box;
+  --playground_scrollbar_bg: #1c6a97;
+  --playground_scrollbar_onhover_bg: #2b5974;
+  --playground_scrollbar_onactive_bg: #185274;
+
+  @include --use-root-variable-colors((globals, blue, yell0w, green));
+}
+
+::-webkit-scrollbar {
+  --scrollbar_size: var(--playground_scrollbar_size);
+
+  background: transparent;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  --scrollbar_bg: var(--playground_scrollbar_bg);
+
+  transition: background-color 2s;
+  border-radius: var(--border-radius);
+
+  background-clip: var(--playground_scrollbar_box) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--playground_scrollbar_onhover_bg);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--playground_scrollbar_onactive_bg);
+}
+
+html[lang] {
+  font-family: Nunito, Roboto, 'Kinto Sans', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+
+#playground {
+  width: 100vw;
+  height: 100vh;
+
+  padding: calc(var(--space) * 2);
+
+  overflow: hidden;
+}
+
+.example-text {
+  padding: var(--space);
+
+  color: var(--text_color);
+}
+
+
+@include --use-theme-custom(custom-theme) {
+  --text_color: var(--color-blue900);
+
+  @include --use-theme using ($theme) {
+    @if $theme == dark {
+      .dark\:example-text {
+        --text_color: var(--color-yell0w900);
+      }
+    }
+
+    @if $theme == light {
+      .light\:example-text {
+        --text_color: var(--color-green200);
+      }
+    }
+  }
+}

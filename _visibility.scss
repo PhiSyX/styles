@@ -1,0 +1,6 @@
+@mixin --use-display {
+  .hidden,
+  [hidden] { display: none; }
+
+  .shown { display: block; }
+}

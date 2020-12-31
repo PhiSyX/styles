@@ -1,0 +1,31 @@
+%h1 { font-size: clamp(3.5ch, 2.5vw, 5ch); }
+%h2 { font-size: clamp(3ch, 2.5vw, 4ch); }
+%h3 { font-size: clamp(2.5ch, 2.5vw, 3.5ch); }
+%h4 { font-size: clamp(2ch, 2.5vw, 3ch); }
+%h5 { font-size: clamp(1.5ch, 2.5vw, 2.5ch); }
+%h6 { font-size: 1.5ch; }
+
+@mixin --use-base-heading {
+  @for $number from 1 through 6 {
+    h#{$number},
+    .h#{$number}-like { @extend %h#{$number}; }
+  }
+}
+
+@mixin --use-base {
+  *,
+  *::after,
+  *::before { box-sizing: inherit; }
+
+  html[lang] {
+    box-sizing: border-box;
+    overflow: hidden;
+    font-weight: 400;
+    font-size: var(--font-size, 16px);
+  }
+}
+
+@mixin --use-all-base {
+  @include --use-base;
+  @include --use-base-heading;
+}

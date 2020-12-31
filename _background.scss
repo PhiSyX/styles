@@ -1,0 +1,11 @@
+@mixin --use-background {
+  .bg\:example {
+    background: conic-gradient(
+      rgba(#29527B, .6) 25%,
+      rgba(#29527B, .65) 0deg 50%,
+      rgba(#29527B, .6) 0deg 75%,
+      rgba(#29527B, .65) 0deg
+    );
+    background-size: 25px 25px;
+  }
+}
