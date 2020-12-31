@@ -2,7 +2,10 @@
   <div class="[ scroll[hidden] scroll ]">
     <h1>Playground</h1>
 
-    <TextSection />
+    <details open>
+      <summary>Texte section</summary>
+      <TextSection />
+    </details>
   </div>
 </template>
 

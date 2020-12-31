@@ -41,17 +41,17 @@ $variants-theme-dark: (
 
   @each $theme in $themes {
     @if & {
-      [data-theme="#{'' + $theme}"] & { @content($theme); }
+      [data-theme*="#{'' + $theme}"] & { @content($theme); }
     } @else {
-      [data-theme="#{'' + $theme}"] { @content($theme); }
+      [data-theme*="#{'' + $theme}"] { @content($theme); }
     }
   }
 }
 
 @mixin --use-theme-custom($theme) {
   @if & {
-    [data-theme="#{'' + $theme}"] & { @content; }
+    [data-theme*="#{'' + $theme}"] & { @content; }
   } @else {
-    [data-theme="#{'' + $theme}"] { @content; }
+    [data-theme*="#{'' + $theme}"] { @content; }
   }
 }
