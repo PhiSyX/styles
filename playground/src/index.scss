@@ -9,6 +9,7 @@
 @import "../../scroll";
 @import "../../background";
 @import "../../flex";
+@import "../../layout";
 
 @import "./mixins";
 
@@ -17,6 +18,7 @@
 @include --use-scroll;
 @include --use-background;
 @include --use-flex;
+@include --use-frame-iphone;
 
 :root {
   --playground_scrollbar_box: padding-box;

@@ -1,0 +1,33 @@
+@mixin --use-frame-iphone {
+  .iphone5-frame {
+    min-width: 320px;
+    width: 320px;
+    max-width: 320px;
+
+    min-height: 568px;
+    height: 568px;
+    max-height: 568px;
+  }
+
+  .iphone6-frame,
+  .iphone7-frame,
+  .iphone8-frame {
+    min-width: 375px;
+    width: 375px;
+    max-width: 375px;
+
+    min-height: 667px;
+    height: 667px;
+    max-height: 667px;
+  }
+
+  .iphoneX-frame {
+    min-width: 375px;
+    width: 375px;
+    max-width: 375px;
+
+    min-height: 812px;
+    height: 812px;
+    max-height: 812px;
+  }
+}
