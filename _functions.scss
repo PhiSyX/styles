@@ -1,0 +1,40 @@
+@function str_replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str_replace(
+      str-slice($string, $index + str-length($search)),
+      $search,
+      $replace
+    );
+  }
+  @return $string;
+}
+
+@function svg_encode($svg) {
+  $len: str-length($svg) + 1;
+
+  $encode: (
+    '"': "%22",
+    "#": "%23",
+    "%": "%25",
+    "<": "%3C",
+    ">": "%3E",
+    "{": "%7B",
+    "}": "%7D",
+  );
+
+  $string: "";
+  $character: "";
+
+  @for $i from 1 to $len {
+    $character: str-slice($svg, $i, $i);
+
+    @if index(map-keys($encode), $character) {
+      $character: map-get($encode, $character);
+    }
+
+    $string: $string + $character;
+  }
+
+  @return "data:image/svg+xml," + $string;
+}

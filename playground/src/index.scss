@@ -1,3 +1,5 @@
+@import "../../functions";
+
 @import "../../theme";
 @import "../../variables";
 
@@ -6,11 +8,15 @@
 @import "../../colors";
 @import "../../scroll";
 @import "../../background";
+@import "../../flex";
+
+@import "./mixins";
 
 @include --use-all-base;
 
 @include --use-scroll;
 @include --use-background;
+@include --use-flex;
 
 :root {
   --playground_scrollbar_box: padding-box;
@@ -53,6 +59,10 @@ html[lang] {
   font-family: Nunito, Roboto, 'Kinto Sans', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
+body * {
+  color: var(--text_color, currentColor);
+}
+
 #playground {
   width: 100vw;
   height: 100vh;
@@ -62,27 +72,72 @@ html[lang] {
   overflow: hidden;
 }
 
-.example-text {
-  padding: var(--space);
-
-  color: var(--text_color);
-}
-
-
-@include --use-theme-custom(custom-theme) {
-  --text_color: var(--color-blue900);
+.playground\@bg\:primary {
+  fill: currentColor;
+  background-attachment: fixed;
+  background-position: .75rem;
 
   @include --use-theme using ($theme) {
     @if $theme == dark {
-      .dark\:example-text {
-        --text_color: var(--color-yell0w900);
-      }
-    }
-
-    @if $theme == light {
-      .light\:example-text {
-        --text_color: var(--color-green200);
-      }
+      background: #212121;
+      @include playgroundBackgroundPrimary(#444);
+    } @else if $theme == light {
+      background: #eaf2f4;
+      @include playgroundBackgroundPrimary(#c5cae9);
     }
   }
+}
+
+.playground\@bg\:secondary {
+  background-position: center center;
+
+  @include --use-theme using ($theme) {
+    @if $theme == dark {
+      background: #31373c;
+      @include playgroundBackgroundSecondary(
+        $gradient-stroke-1: #e1e1e1,
+        $gradient-stroke-2: #d9d9dc,
+        $gradient-stroke-3: #d1d1d8,
+        $gradient-stroke-4: #cac9d3,
+        $gradient-stroke-5: #c2c1cf,
+        $gradient-stroke-6: #bab9ca,
+        $gradient-stroke-7: #b3b1c6,
+        $gradient-stroke-8: #aba9c1,
+        $gradient-stroke-9: #a3a1bd,
+        $gradient-stroke-10: #9c9ab8,
+        $gradient-stroke-11: #9492b4,
+        $gradient-stroke-12: #8c8aaf,
+        $gradient-stroke-13: #8583ab,
+        $gradient-stroke-14: #7d7ca6,
+        $gradient-stroke-15: #7574a2,
+        $gradient-stroke-16: #6e6d9d,
+        $gradient-stroke-17: #666699,
+      );
+    } @else if $theme == light {
+      background: #c5cae9;
+      @include playgroundBackgroundSecondary(
+        $gradient-stroke-1: #fff,
+        $gradient-stroke-2: #fff,
+        $gradient-stroke-3: #fff,
+        $gradient-stroke-4: #fff,
+        $gradient-stroke-5: #fff,
+        $gradient-stroke-6: #fff,
+        $gradient-stroke-7: #fff,
+        $gradient-stroke-8: #fff,
+        $gradient-stroke-9: #fff,
+        $gradient-stroke-10: #fff,
+        $gradient-stroke-11: #fff,
+        $gradient-stroke-12: #fff,
+        $gradient-stroke-13: #fff,
+        $gradient-stroke-14: #fff,
+        $gradient-stroke-15: #fff,
+        $gradient-stroke-16: #fff,
+        $gradient-stroke-17: #fff,
+      );
+    }
+  }
+}
+
+.example-text {
+  padding: var(--space);
 }

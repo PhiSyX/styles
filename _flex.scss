@@ -1,0 +1,72 @@
+@import "./functions";
+
+@mixin --extend-flex {
+  &,
+  &\! {
+    @extend .flex;
+    @content;
+  }
+
+  &\* {
+    @extend .flex\*;
+    @content;
+  }
+
+  &\! { @extend .flex\!; }
+}
+
+@mixin --use-flex {
+  .flex {
+    &, &\! { display: flex; }
+    &\*    { display: inline-flex; }
+    &\!    { flex-direction: column !important; }
+  }
+
+  .flex-center {
+    @include --extend-flex {
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .flex-grow { flex-grow: 1; }
+  .flex-wrap { flex-wrap: wrap; }
+
+  // Flex Justify Content
+
+  $jcontent: (
+    space-around, space-between, space-evenly,
+    flex-start, center, flex-end,
+    stretch
+  );
+
+  @each $value in $jcontent {
+    $selector: str_replace($value, "space-", "");
+    $selector: str_replace($value, "flex-", "");
+
+    .flex\:jc-#{$selector} {
+      @include --extend-flex {
+        justify-content: #{$value};
+      }
+    }
+  }
+
+  // Flex Align Items
+
+  $aitems: (
+    baseline,
+    flex-start, center, flex-end,
+    stretch,
+  );
+
+  @each $value in $aitems {
+    $selector: str_replace($value, "flex-", "");
+
+    .flex\:ai-#{$selector} {
+      @include --extend-flex {
+        align-items: #{$value};
+      }
+    }
+  }
+}
