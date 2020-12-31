@@ -1,0 +1,23 @@
+@mixin --use-text {
+  .text-small { font-size: var(--font-size_sm); }
+  .text-normal { font-size: var(--font-size); }
+
+  .text-bold { font-weight: bold; }
+  .text-italic { font-style: italic; }
+  .text-underline { text-decoration: underline; }
+
+  $vertical-align: (top, middle, bottom);
+  @each $align in $vertical-align {
+    .v-align\:#{$align} { vertical-align: $align; }
+  }
+
+  $user-select: (none, text, all);
+  @each $select in $user-select {
+    .u-select\:#{$select} { user-select: $select; }
+  }
+
+  $pointer-events: (none, auto);
+  @each $pvent in $pointer-events {
+    .p-events\:#{$pvent} { pointer-events: $pvent; }
+  }
+}

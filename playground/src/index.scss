@@ -10,6 +10,7 @@
 @import "../../background";
 @import "../../flex";
 @import "../../layout";
+@import "../../text";
 
 @import "./mixins";
 
@@ -19,6 +20,7 @@
 @include --use-background;
 @include --use-flex;
 @include --use-frame-iphone;
+@include --use-text;
 
 :root {
   --playground_scrollbar_box: padding-box;

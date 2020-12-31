@@ -37,6 +37,76 @@
           ` }}
         </h6>
       </div>
+
+      <h3>Taille du texte</h3>
+      <div class="playground@bg:primary">
+        <p class="text-normal">.text-normal (16px, default)</p>
+        <p class="text-small">.text-small (12px)</p>
+
+        <p class="text-small">
+          Je fais un <span class="text-normal">test</span> !!!!
+        </p>
+      </div>
+
+      <h3>Alignement du texte</h3>
+      <div class="playground@bg:primary">
+        <p class="v-align:top">.v-align:top</p>
+        <p class="v-align:middle">.v-align:middle</p>
+        <p class="v-align:bottom">.v-align:bottom</p>
+
+        <hr />
+
+        <p class="text-large">
+          <span class="v-align:top [ text-small ]">TOP.</span>
+          Je fais un test
+        </p>
+        <p class="text-large">
+          <span class="v-align:middle [ text-small ]">MIDDLE.</span>
+          Je fais un test
+        </p>
+        <p class="text-large">
+          <span class="v-align:bottom [ text-small ]">BOTTOM.</span>
+          Je fais un test
+        </p>
+      </div>
+
+      <h3>Format de texte</h3>
+      <div class="playground@bg:primary">
+        <p class="text-bold">.text-bold</p>
+        <p class="text-italic">.text-italic</p>
+        <p class="text-underline">.text-underline</p>
+
+        <hr />
+
+        <p>
+          Je
+          <span class="text-underline"
+            >fais u<span class="text-italic"
+              >n <span class="text-bold">test</span> !</span
+            >!</span
+          >!!
+        </p>
+      </div>
+
+      <h3>Sélection du texte</h3>
+      <div class="playground@bg:primary">
+        <p class="u-select:none">.u-select:none</p>
+        <p class="u-select:text">.u-select:text</p>
+        <p class="u-select:all">.u-select:all</p>
+
+        <hr />
+
+        <p class="u-select:none">Ce texte ne peut pas être sélectionné.</p>
+        <p class="u-select:text">
+          Ce texte est
+          <span class="u-select:none">partiellement</span> sélectionnable
+        </p>
+        <p class="u-select:all">
+          Ce texte est
+          <span class="u-select:none">partiellement</span> sélectionnable au
+          clique.
+        </p>
+      </div>
     </div>
 
     <div data-theme="dark">
@@ -102,5 +172,9 @@ export default defineComponent({
 <style scoped>
 h3 {
   min-width: 250px;
+}
+
+.text-large {
+  font-size: 24px;
 }
 </style>
