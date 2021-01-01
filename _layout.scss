@@ -35,6 +35,8 @@
 @mixin --use-layout {
   @include --use-width;
   @include --use-height;
+  @include --use-display;
+  @include --use-position;
 }
 
 @mixin --use-width {
@@ -59,4 +61,22 @@
 
   .max-h\:auto { max-height: auto; }
   .max-h\:full { max-height: 100%; }
+}
+
+@mixin --use-display {
+  .d-b  { display: block; }
+  .d-i  { display: inline; }
+  .d-ib { display: inline-block; }
+}
+
+@mixin --use-position {
+  .pos-r { position: relative; }
+
+  .pos-a\:full {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
 }
