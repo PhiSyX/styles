@@ -54,24 +54,22 @@
 
       <h3>Alignement du texte</h3>
       <div class="playground@bg:primary">
-        <p class="v-align:top">.v-align:top</p>
-        <p class="v-align:middle">.v-align:middle</p>
-        <p class="v-align:bottom">.v-align:bottom</p>
+        <p class="text-large">
+          <span class="v-align:top [ text-small ]">.v-align:top</span>
+          Texte large
+        </p>
+        <p class="text-large">
+          <span class="v-align:middle [ text-small ]">.v-align:middle</span>
+          Texte large
+        </p>
+        <p class="text-large">
+          <span class="v-align:bottom [ text-small ]">.v-align:bottom</span>
+          Texte large
+        </p>
 
-        <hr />
-
-        <p class="text-large">
-          <span class="v-align:top [ text-small ]">TOP.</span>
-          Je fais un test
-        </p>
-        <p class="text-large">
-          <span class="v-align:middle [ text-small ]">MIDDLE.</span>
-          Je fais un test
-        </p>
-        <p class="text-large">
-          <span class="v-align:bottom [ text-small ]">BOTTOM.</span>
-          Je fais un test
-        </p>
+        <p class="text-left">.text-left</p>
+        <p class="text-center">.text-center</p>
+        <p class="text-right">.text-right</p>
       </div>
 
       <h3>Format de texte</h3>
