@@ -23,6 +23,15 @@
     font-weight: 400;
     font-size: var(--font-size, 16px);
   }
+
+  a,
+  button,
+  input { color: inherit; }
+
+  button img,
+  svg { vertical-align: middle; }
+
+  label[for] { cursor: pointer; }
 }
 
 @mixin --use-all-base {

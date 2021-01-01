@@ -4,3 +4,39 @@
 
   .shown { display: block; }
 }
+
+@mixin --sr-only {
+  .sr-only {
+    position: absolute !important;
+    margin: -1px;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    padding: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+}
+
+@mixin --use-blur {
+  .blur,
+  img:not([alt]),
+  img[alt=""] {
+    filter: blur(4px);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+
+    &, * { user-select: none !important; }
+
+    * {
+      pointer-events: none !important;
+      z-index: 1 !important;
+    }
+  }
+}
+
+@mixin --use-visibility {
+  @include --use-blur;
+  @include --use-display;
+  @include --sr-only;
+}
