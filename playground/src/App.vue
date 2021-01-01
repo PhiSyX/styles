@@ -11,14 +11,20 @@
       <summary>Frame iPhone</summary>
       <FrameiPhone />
     </details>
+
+    <details open>
+      <summary>Exemple</summary>
+      <Example />
+    </details>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 
-import TextSection from "./Example/TextSection.vue";
-import FrameiPhone from "./Example/FrameiPhone.vue";
+import TextSection from "./Section/Text.vue";
+import FrameiPhone from "./Section/FrameiPhone.vue";
+import Example from "./Section/Example.vue";
 
 export default defineComponent({
   name: "App",
@@ -26,6 +32,7 @@ export default defineComponent({
   components: {
     TextSection,
     FrameiPhone,
+    Example,
   },
 });
 </script>
