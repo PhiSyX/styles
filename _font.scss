@@ -1,0 +1,13 @@
+@mixin --use-font {
+  /**
+   * ! FIXME: à remplacer par mes propres règles (qui sont
+   invalides) ?
+   */
+  @for $i from 10 to 26 {
+    $value: #{$i} + "px";
+
+    .f-size\=#{$i} {
+      font-size: #{$value};
+    }
+  }
+}

@@ -43,6 +43,10 @@
         <p class="text-normal">.text-normal (16px, default)</p>
         <p class="text-small">.text-small (12px)</p>
 
+        <p v-for="i in 15" :key="i" :class="{ [`f-size=${i + 10}`]: true }">
+          .f-size={{ i + 10 }}
+        </p>
+
         <p class="text-small">
           Je fais un <span class="text-normal">test</span> !!!!
         </p>

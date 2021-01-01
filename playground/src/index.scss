@@ -12,6 +12,7 @@
 @import "../../layout";
 @import "../../text";
 @import "../../visibility";
+@import "../../font";
 
 @import "./mixins";
 
@@ -23,6 +24,7 @@
 @include --use-frame-iphone;
 @include --use-text;
 @include --use-blur;
+@include --use-font;
 
 :root {
   --playground_scrollbar_box: padding-box;
