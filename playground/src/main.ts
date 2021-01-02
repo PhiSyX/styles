@@ -1,4 +1,5 @@
 import { loadStyle, setStyle } from "./invalid-css.ts";
+import { __DEV__ } from "./helpers/node/env.ts";
 
 import "./index.scss";
 
@@ -11,6 +12,8 @@ const app = createApp(Playground);
 app.mount("#playground");
 
 nextTick(() => {
-  loadStyle("/invalid.css")
+  loadStyle(
+    __DEV__ ? "/invalid.css" : "/styles/invalid.css",
+  )
     .then(() => setStyle("#playground"));
 });

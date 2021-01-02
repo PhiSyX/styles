@@ -28,7 +28,7 @@
                   ? null
                   : `Cette image est floue car l'élément n'a pas d'attribut 'alt'.`
               "
-              src="/test.png"
+              :src="src"
               class="[ size=3 ]"
             />
           </div>
@@ -83,6 +83,8 @@
 <script>
 import { defineComponent } from "vue";
 
+import { __DEV__ } from "../helpers/node/env.ts";
+
 export default defineComponent({
   name: "Example",
 
@@ -90,6 +92,7 @@ export default defineComponent({
     return {
       text: "",
       n: ["", ""],
+      src: __DEV__ ? "/test.png" : "/styles/test.png",
     };
   },
 });

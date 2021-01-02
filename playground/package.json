@@ -3,8 +3,9 @@
   "name": "playground",
   "version": "0.0.0",
   "scripts": {
+    "after:build": "echo ##### CHANGER LES CHEMINS /assets/ VERS /styles/assets DANS index.html #####",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build && npm run after:build"
   },
   "dependencies": {
     "vue": "^3.0.4"
