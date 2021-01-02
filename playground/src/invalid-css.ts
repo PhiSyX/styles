@@ -1,5 +1,5 @@
-import { iswmcs } from "./helpers/shared/lang";
-import { toString } from "./helpers/shared/string";
+import { iswmcs } from "./helpers/shared/lang.ts";
+import { escapeCharacters, toString } from "./helpers/shared/string.ts";
 
 function testRegexify(str: string) {
   return new RegExp(
@@ -28,11 +28,12 @@ function escapeSelector(
   exceptChars: string[] = [],
 ): string {
   const algo = (str: string) => {
-    const characters = SPECIAL_CHARS.split("")
-      .filter((w) => !exceptChars.includes(w))
-      .map((w) => `\\${w}`)
-      .join("");
-    const CHARS_TO_ESCAPE = new RegExp(`[${characters}]`, "g");
+    const escapedCharacters = escapeCharacters(
+      SPECIAL_CHARS,
+      "\\",
+      exceptChars,
+    );
+    const CHARS_TO_ESCAPE = new RegExp(`[${escapedCharacters}]`, "g");
     const CHECK_CHARS = new RegExp(CHARS_TO_ESCAPE.source, "g");
     return CHECK_CHARS.test(str) ? str.replace(CHARS_TO_ESCAPE, "\\$&") : str;
   };
@@ -66,10 +67,13 @@ export async function loadStyle(url: string) {
       const types = params.split(/[^\w]/).filter(Boolean);
       const state = [];
 
-      const _selector = id.replace(/[:](focus|hover)$/, (_, $1) => {
-        state.push($1);
-        return "";
-      });
+      const _selector = id.replace(
+        /[:](focus|hover)$/, // TODO: améliorer cette partie
+        (_: string, $1: string) => {
+          state.push($1);
+          return "";
+        },
+      );
 
       const payload = {
         selector: _selector,
@@ -97,7 +101,7 @@ export async function loadStyle(url: string) {
 }
 
 const manageBody = (types: string[], body: string) => {
-  const replaceParam = (_, $1) => {
+  const replaceParam = (_: string, $1: string) => {
     const index = types.findIndex((type: string) => type === $1);
     if (index < 0) return _;
     return "${data[" + index + "]}";
@@ -123,10 +127,10 @@ export function setStyle($el: string | Element) {
     });
 }
 
-const createObserver = ($el) => {
+const createObserver = ($el: HTMLElement | Node) => {
   const observer = new MutationObserver((entries) => {
     const [$firstEntry] = entries;
-    applyStyle((<any> $firstEntry.target).classList);
+    applyStyle((<HTMLElement> $firstEntry.target).classList);
   });
 
   observer.observe($el, {
@@ -136,7 +140,7 @@ const createObserver = ($el) => {
 };
 
 const applyStyle = (classList: DOMTokenList) => {
-  const _test = (className, rule) => {
+  const _test = (className: string, rule: RulesStylesheet) => {
     const $$1 = escapeSelector(className, [".", "%"]);
     const $$2 = rule.selector.slice(1);
     const userData = $$1.split(testRegexify($$2)).filter(Boolean);
@@ -148,7 +152,7 @@ const applyStyle = (classList: DOMTokenList) => {
       const type = rule.types[i];
       const value = userData[i];
 
-      let temp;
+      let temp: string | number;
       switch (type) {
         case "color":
           temp = escapeSelector(value);
@@ -187,6 +191,10 @@ const applyStyle = (classList: DOMTokenList) => {
 
     if (data.length === 0) return;
 
+    // Dans le cas où deux types sont obligatoires
+    // mais que un ou plusieurs valeurs sont mauvaises:
+    if (userData.length > data.length) return;
+
     const injectData = new Function("data", `return ${rule.body}`);
 
     let stylesheet = [
@@ -205,7 +213,10 @@ const applyStyle = (classList: DOMTokenList) => {
     $styleElement!.textContent += "\n" + stylesheet;
   };
 
-  const _buildStyle = (className, rule) => {
+  const _buildStyle = (
+    className: string,
+    rule: [string, RulesStylesheet[]],
+  ) => {
     for (let i = 0; i < rule[1].length; i++) {
       _test(className, rule[1][i]);
     }
