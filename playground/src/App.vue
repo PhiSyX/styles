@@ -1,5 +1,5 @@
 <template>
-  <div class="[ scroll[hidden] scroll ]">
+  <div class="[ scroll[hidden] scroll flex! gap=4 ]">
     <h1>Playground</h1>
 
     <details>

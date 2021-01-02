@@ -5,7 +5,7 @@
     <div data-theme="dark">
       <h3>Typographie (responsive)</h3>
 
-      <div class="playground@bg:primary">
+      <div class="playground@bg:primary [ p=2 ]">
         <h1>
           {{ `
           <h1>Texte</h1>
@@ -39,21 +39,32 @@
       </div>
 
       <h3>Taille du texte</h3>
-      <div class="playground@bg:primary">
-        <p class="text-normal">.text-normal (16px, default)</p>
-        <p class="text-small">.text-small (12px)</p>
+      <div class="playground@bg:primary [ flex gap=1 ]">
+        <pre
+          class="playground@bg:secondary [ flex-grow ] [ m=0 p=2 ]"
+        >{{ `<style id="invalid-css">
+.f-size=*:param(length) {
+  font-size: param(length);
+}
+</style>` }}</pre>
 
-        <p v-for="i in 15" :key="i" :class="{ [`f-size=${i + 10}`]: true }">
-          .f-size={{ i + 10 }}
-        </p>
+        <div class="[ flex-grow ] [ px=2 text-right ]">
+          <p class="text-normal">.text-normal (16px, default)</p>
+          <p class="text-small">.text-small (12px)</p>
 
-        <p class="text-small">
-          Je fais un <span class="text-normal">test</span> !!!!
-        </p>
+          <p v-for="i in 14" :key="i" :class="{ [`f-size=${i + 10}px`]: true }">
+            .f-size={{ i + 10 }}px
+          </p>
+          <p>etc...</p>
+
+          <p class="text-small">
+            Je fais un <span class="text-normal">test</span> !!!!
+          </p>
+        </div>
       </div>
 
       <h3>Alignement du texte</h3>
-      <div class="playground@bg:primary">
+      <div class="playground@bg:primary [ p=2 ]">
         <p class="text-large">
           <span class="v-align:top [ text-small ]">.v-align:top</span>
           Texte large
@@ -73,13 +84,10 @@
       </div>
 
       <h3>Format de texte</h3>
-      <div class="playground@bg:primary">
+      <div class="playground@bg:primary [ p=2 ]">
         <p class="text-bold">.text-bold</p>
         <p class="text-italic">.text-italic</p>
         <p class="text-underline">.text-underline</p>
-
-        <hr />
-
         <p>
           Je
           <span class="text-underline"
@@ -95,9 +103,6 @@
         <p class="u-select:none">.u-select:none</p>
         <p class="u-select:text">.u-select:text</p>
         <p class="u-select:all">.u-select:all</p>
-
-        <hr />
-
         <p class="u-select:none">Ce texte ne peut pas être sélectionné.</p>
         <p class="u-select:text">
           Ce texte est
@@ -115,14 +120,14 @@
       <h3>Dark theme (inclus par défaut)</h3>
 
       <div class="playground@bg:secondary [ flex ]">
-        <pre>{{
+        <pre class="[ flex-grow ] [ m=0 p=2 ]">{{
 `<div data-theme="dark">
   <p class="example-text">
     ${exampleText}
   </p>
 </div>` }}</pre>
 
-        <div class="playground@bg:primary">
+        <div class="playground@bg:primary [ px=2 ]">
           <p class="example-text">
             {{ exampleText }}
           </p>
@@ -134,7 +139,7 @@
       <h3>Light theme (inclus par défaut)</h3>
 
       <div class="playground@bg:secondary [ flex ]">
-        <pre>{{
+        <pre class="[ flex-grow ] [ m=0 p=2 ]">{{
 `<div data-theme="light">
   <p class="example-text [ light:example-text ]">
     ${exampleText}
@@ -142,7 +147,7 @@
 </div>`
         }}</pre>
 
-        <div class="playground@bg:primary">
+        <div class="playground@bg:primary [ px=2 ]">
           <p class="example-text [ light:example-text ]">
             {{ exampleText }}
           </p>

@@ -4,6 +4,7 @@
 @import "../../variables";
 
 @import "../../bases";
+@import "../../reset";
 
 @import "../../colors";
 @import "../../scroll";
@@ -12,19 +13,21 @@
 @import "../../layout";
 @import "../../text";
 @import "../../visibility";
-@import "../../font";
+@import "../../cursor";
 
 @import "./mixins";
 
 @include --use-all-base;
+@include --use-reset;
 
 @include --use-scroll;
 @include --use-background;
 @include --use-flex;
 @include --use-frame-iphone;
+@include --use-layout;
 @include --use-text;
 @include --use-blur;
-@include --use-font;
+@include --use-cursor;
 
 :root {
   --playground_scrollbar_box: padding-box;
@@ -32,7 +35,7 @@
   --playground_scrollbar_onhover_bg: #2b5974;
   --playground_scrollbar_onactive_bg: #185274;
 
-  @include --use-root-variable-colors((globals, blue, yell0w, green));
+  @include --use-root-variable-colors;
 }
 
 ::-webkit-scrollbar {
