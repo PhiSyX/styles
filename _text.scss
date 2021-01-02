@@ -6,6 +6,8 @@
   .text-italic { font-style: italic; }
   .text-underline { text-decoration: underline; }
 
+  .placeholder { opacity: .5; }
+
   $text-align: (left, center, right);
   @each $align in $text-align {
     .text-#{$align} { text-align: $align; }

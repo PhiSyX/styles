@@ -1,0 +1,13 @@
+@mixin --use-reset {
+  .btn\:reset {
+    outline: none;
+    border: 0;
+    background: transparent;
+  }
+
+  .input\:reset {
+    outline: none;
+    border: 0;
+    background: transparent;
+  }
+}
