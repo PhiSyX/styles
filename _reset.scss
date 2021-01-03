@@ -9,5 +9,13 @@
     outline: none;
     border: 0;
     background: transparent;
+    &[type="text"] { cursor: text; }
+  }
+
+  .list\:reset {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
   }
 }
