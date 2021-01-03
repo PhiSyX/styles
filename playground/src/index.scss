@@ -1,33 +1,16 @@
 @import "../../functions";
-
 @import "../../theme";
 @import "../../variables";
-
 @import "../../bases";
-@import "../../reset";
-
 @import "../../colors";
-@import "../../scroll";
-@import "../../background";
-@import "../../flex";
-@import "../../layout";
-@import "../../text";
-@import "../../visibility";
-@import "../../cursor";
+
+@import "../../utilities";
 
 @import "./mixins";
 
 @include --use-all-base;
-@include --use-reset;
 
-@include --use-scroll;
-@include --use-background;
-@include --use-flex;
-@include --use-frame-iphone;
-@include --use-layout;
-@include --use-text;
-@include --use-blur;
-@include --use-cursor;
+
 
 :root {
   --playground_scrollbar_box: padding-box;
