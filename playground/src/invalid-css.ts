@@ -128,14 +128,23 @@ export function setStyle($el: string | Element) {
 }
 
 const createObserver = ($el: HTMLElement | Node) => {
-  const observer = new MutationObserver((entries) => {
+  const observer = new MutationObserver(function (entries) {
     const [$firstEntry] = entries;
+
+    if ($firstEntry.addedNodes.length > 0) {
+      $firstEntry.addedNodes.forEach((el) => {
+        setStyle(<HTMLElement> el);
+      });
+      return;
+    }
+
     applyStyle((<HTMLElement> $firstEntry.target).classList);
   });
 
   observer.observe($el, {
     attributeFilter: ["class"],
     attributes: true,
+    childList: true,
   });
 };
 
