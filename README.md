@@ -1,28 +1,28 @@
 # Mes utilitaires pour CSS (écrit en SCSS).
 
-
-[Guide de Style](#styleguide)
+  - [Guide de Style](#styleguide)
 
 
 
 ## Récupérer ce projet ?
-  - Télécharger le projet depuis un terminal en utilisant [git](https://git-scm.com), ou en téléchargeant le zip.
+  - Projet existant **sans** git d'initialisé ?
+
+    Télécharger le projet depuis un terminal en utilisant [git](https://git-scm.com), ou en téléchargeant le zip.
 
     Ligne de commande:
     > $   git clone https://github.com/PhiSyX/styles
 
+    Créer un [lien symbolique](https://fr.wikipedia.org/wiki/Lien_symbolique) vers votre projet.
+
+  - Projet existant **avec** git d'initialisé ?
+
+    > $   git submodule add https://github.com/PhiSyX/styles **PROJECT_TARGET**
+    > > **PROJECT_TARGET**  "/mon/super/projet/personnel/styles"
+
+
+
 ## Utiliser ce code pour les autres projets ?
   - Requiert d'avoir un projet pouvant compiler le scss.
-
-  - Créer un [lien symbolique](https://fr.wikipedia.org/wiki/Lien_symbolique).
-
-    Comme ce sont des sources qui pourront être partagées entre plusieurs projets, il est préférable de créer un lien symbolique.
-
-    Sous Windows:
-    > $   MKLINK /D "**PROJECT_TARGET**" "**REPO_GIT_FOLDER**"
-    > > **PROJECT_TARGET**  "/mon/super/projet/personnel/styles" \
-    > > **REPO_GIT_FOLDER** "/dossier/téléchargé/styles"
-    >
 
   - Importer les utilitaires spécifiques dans les différents projets et les utiliser.
 
@@ -33,19 +33,22 @@
   > ```bash
   > $ cd playground/
   > $ npm install # or yarn
-  > $ npm run dev # or yarn dev
+  > $ npm run dev # or yarn dev (dev server)
+  > $ npm run build # or yarn build (build files)
   > ```
 
+
+
 ---
 ---
 ---
 ---
 ---
+
+
 
 # STYLEGUIDE
-
 ## Le CSS pour ce projet :
-
 ### Les noms des variables doivent suivre cette nomenclature :
   - Termes:
     - `separator` est soit "`_`" soit "`-`".
@@ -117,6 +120,8 @@
 
         - State:  ".class-name`:state`"
           > &lt;p class="[ app@btn`:hover` app@btn`:focus` ] [ light:app@btn`:hover` light:app@btn`:focus` ]">
+
+
 
 ### Ordre des propriétés: (liste non-exhaustive)
   - box-sizing [content-box|border-box|inherit|initial|unset]
@@ -379,12 +384,23 @@
     - `page-break-inside`
 
 
+
 ## Le SCSS pour ce projet:
   Les noms des fonctions doivent être séparé par des "`_`". Pourquoi ? \
   Les noms des fonctions qu'offre sass sont séparé par des "`-`". \
   Pour faire le distinguo entre les deux, il est préférable, pour nous, d'utiliser une autre nomenclature.
 
-## Niveau de transparence des couleurs HEX:
+
+
+---
+---
+---
+---
+---
+
+
+
+# Niveau de transparence des couleurs HEX:
   #??????**00**  ->  #ff00ff**00**  ->    0% \
   #??????**0C**  ->  #ff00ff**0C**  ->    5% \
   #??????**19**  ->  #ff00ff**19**  ->   10% \
