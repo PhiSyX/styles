@@ -1,0 +1,10 @@
+ @mixin --use-float {
+  $positions: (left, right);
+
+  @each $position in $positions {
+    $first-letter: first_char($position);
+    .float-#{$first-letter} { float: $position; }
+  }
+
+  .clearfix { clear: both; }
+}
