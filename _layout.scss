@@ -69,6 +69,13 @@
   .d-ib { display: inline-block; }
 }
 
+@mixin --use-contain {
+  $contains: (content, initial, size);
+  @each $contain in $contains {
+    .contain\:#{$contain} { contain: $contain; }
+  }
+}
+
 @mixin --use-position {
   .pos-r { position: relative; }
 
