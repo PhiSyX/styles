@@ -66,4 +66,30 @@
   .scroll\:hidden {
     overflow: hidden;
   }
+
+  .auto\:scroll {
+    --direction: ltr;
+    --text-overflow: ellipsis;
+
+    overflow-x: hidden;
+    animation: autoScrollAnimation 2s step-start 0s infinite;
+    direction: var(--direction);
+    text-overflow: var(--text-overflow);
+    white-space: nowrap;
+
+    &:active,
+    &:hover {
+      --direction: rtl;
+      --text-overflow: clip;
+      animation: none;
+      &:after { content: "\200E‎"; }
+    }
+  }
+
+  @keyframes autoScrollAnimation {
+    50% {
+      --direction: rtl;
+      --text-overflow: clip;
+    }
+  }
 }
