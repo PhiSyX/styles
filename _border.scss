@@ -1,0 +1,5 @@
+@import "../mixins";
+
+@mixin --use-border {
+  .border\:none { border: none; }
+}
