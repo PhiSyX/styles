@@ -1,3 +1,7 @@
+@function first_char($text) {
+  @return str-slice($text, 0, 1);
+}
+
 @function str_replace($string, $search, $replace: "") {
   $index: str-index($string, $search);
   @if $index {

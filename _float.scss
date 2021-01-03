@@ -1,4 +1,6 @@
- @mixin --use-float {
+@import "./functions";
+
+@mixin --use-float {
   $positions: (left, right);
 
   @each $position in $positions {
