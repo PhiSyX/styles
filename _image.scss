@@ -1,0 +1,7 @@
+@mixin --use-image {
+  $object-fit: (cover, contain, fill, scale-down);
+
+  @each $object in $object-fit {
+    .img\:#{$object} { object-fit: $object; }
+  }
+}
