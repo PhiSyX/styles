@@ -2,6 +2,37 @@
   @return str-slice($text, 0, 1);
 }
 
+@function em($pixels, $context) {
+  @if type_of($pixels) == number and unit($pixels) == "%" {
+    @return $pixels;
+  }
+
+  @if unitless($pixels) {
+    $pixels: $pixels * 1px;
+  }
+  @if unitless($context) {
+    $context: $context * 1px;
+  }
+
+  @return ($pixels / $context) * 1em;
+}
+
+@function rem($pixels, $context) {
+  @if type_of($pixels) == number and unit($pixels) == "%" {
+    @return $pixels;
+  }
+
+  @if unitless($pixels) {
+    $pixels: $pixels * 1px;
+  }
+  @if unitless($context) {
+    $context: $context * 1px;
+  }
+
+  @return ($pixels / $context) * 1rem;
+}
+
+
 @function str_replace($string, $search, $replace: "") {
   $index: str-index($string, $search);
   @if $index {
