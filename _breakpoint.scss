@@ -1,0 +1,180 @@
+@import "./functions";
+
+$mobile-xs: 320px !default;
+$mobile-sm: 375px !default;
+$mobile-md: 425px !default;
+
+$tablet: 768px !default;
+$laptop: 1024px !default;
+$laptop-lg: 1440px !default;
+$screen-4k: 2560px !default;
+
+// Functions
+
+// Mixins
+
+// XS
+@mixin --use-mq-xs {
+  $min: strip_unit(0px);
+  $max: strip_unit($mobile-xs + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-xs {
+  $min: strip_unit($mobile-xs + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-xs {
+  $max: strip_unit($mobile-xs + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+// SM
+@mixin --use-mq-sm {
+  $min: strip_unit($mobile-xs + 1px);
+  $max: strip_unit($mobile-sm + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-sm {
+  $min: strip_unit($mobile-sm + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-sm {
+  $max: strip_unit($mobile-sm + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+// MD
+
+@mixin --use-mq-md {
+  $min: strip_unit($mobile-sm + 1px);
+  $max: strip_unit($mobile-md + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-md {
+  $min: strip_unit($mobile-md + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-md {
+  $max: strip_unit($mobile-md + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+// LG
+
+@mixin --use-mq-lg {
+  $min: strip_unit($mobile-md + 1px);
+  $max: strip_unit($tablet + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-lg {
+  $min: strip_unit($tablet + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-lg {
+  $max: strip_unit($tablet + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+
+// XL
+
+@mixin --use-mq-xl {
+  $min: strip_unit($tablet + 1px);
+  $max: strip_unit($laptop + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-xl {
+  $min: strip_unit($laptop + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-xl {
+  $max: strip_unit($laptop + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+
+// XXL
+
+@mixin --use-mq-xxl {
+  $min: strip_unit($laptop + 1px);
+  $max: strip_unit($laptop-lg + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-xxl {
+  $min: strip_unit($laptop-lg + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-xxl {
+  $max: strip_unit($laptop-lg + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-4k {
+  $min: strip_unit($laptop-lg + 1px);
+  $max: strip_unit($screen-4k + 1px);
+  @media (min-width: $min * 1px) and (max-width: $max * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-from-4k {
+  $min: strip_unit($screen-4k + 1px);
+  @media (min-width: $min * 1px) {
+    @content;
+  }
+}
+
+@mixin --use-mq-under-4k {
+  $max: strip_unit($screen-4k + 1px);
+  @media (max-width: $max * 1px) {
+    @content;
+  }
+}

@@ -10,6 +10,14 @@
   @return $string;
 }
 
+@function strip_unit($number) {
+  @if type-of($number) == "number" and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
 @function svg_encode($svg) {
   $len: str-length($svg) + 1;
 

@@ -1,0 +1,202 @@
+@mixin --use-all-mq-xs($className, $extend: false) {
+  @include --use-mq-xs {
+    .xs\:#{$className} {
+      @if ($extend != false) {
+        @extend .xs\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-xs {
+    .xs\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .xs\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-xs {
+    .\*xs\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*xs\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
+
+@mixin --use-all-mq-sm($className, $extend: false) {
+  @include --use-mq-sm {
+    .sm\:#{$className} {
+      @if ($extend != false) {
+        @extend .sm\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-sm {
+    .sm\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .sm\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-sm {
+    .\*sm\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*sm\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
+
+@mixin --use-all-mq-md($className, $extend: false) {
+  @include --use-mq-md {
+    .md\:#{$className} {
+      @if ($extend != false) {
+        @extend .md\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-md {
+    .md\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .md\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-md {
+    .\*md\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*md\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
+
+@mixin --use-all-mq-lg($className, $extend: false) {
+  @include --use-mq-lg {
+    .lg\:#{$className} {
+      @if ($extend != false) {
+        @extend .lg\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-lg {
+    .lg\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .lg\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-lg {
+    .\*lg\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*lg\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
+
+@mixin --use-all-mq-xl($className, $extend: false) {
+  @include --use-mq-xl {
+    .xl\:#{$className} {
+      @if ($extend != false) {
+        @extend .xl\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-xl {
+    .xl\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .xl\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-xl {
+    .\*xl\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*xl\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
+
+@mixin --use-all-mq-xxl($className, $extend: false) {
+  @include --use-mq-xxl {
+    .xxl\:#{$className} {
+      @if ($extend != false) {
+        @extend .xxl\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-xxl {
+    .xxl\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .xxl\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-xxl {
+    .\*xxl\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*xxl\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
+
+@mixin --use-all-mq-4k($className, $extend: false) {
+  @include --use-mq-4k {
+    .s4k\:#{$className} {
+      @if ($extend != false) {
+        @extend .s4k\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-from-4k {
+    .s4k\*\:#{$className} {
+      @if ($extend != false) {
+        @extend .s4k\*\:#{$extend};
+      }
+      @content;
+    }
+  }
+
+  @include --use-mq-under-4k {
+    .\*s4k\:#{$className} {
+      @if ($extend != false) {
+        @extend .\*s4k\:#{$extend};
+      }
+      @content;
+    }
+  }
+}
