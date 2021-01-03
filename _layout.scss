@@ -37,6 +37,7 @@
   @include --use-height;
   @include --use-display;
   @include --use-position;
+  @include --use-contain;
 }
 
 @mixin --use-width {

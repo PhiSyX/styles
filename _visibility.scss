@@ -35,6 +35,5 @@
   .shown { display: block; }
 
   @include --use-blur;
-  @include --use-display;
   @include --sr-only;
 }
