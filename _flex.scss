@@ -22,6 +22,15 @@
     &\!    { flex-direction: column !important; }
   }
 
+  .flex-list {
+    @include --extend-flex {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+  }
+
   .flex-center {
     @include --extend-flex {
       justify-content: center;
