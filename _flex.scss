@@ -52,7 +52,7 @@
 
   @each $value in $jcontent {
     $selector: str_replace($value, "space-", "");
-    $selector: str_replace($value, "flex-", "");
+    $selector: str_replace($selector, "flex-", "");
 
     .flex\:jc-#{$selector} {
       @include --extend-flex {
