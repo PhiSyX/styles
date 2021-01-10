@@ -1,3 +1,4 @@
+import type { ARRAY, OBJECT } from "./helpers/shared/types.ts";
 import { iswmcs } from "./helpers/shared/lang.ts";
 import { escapeCharacters, toString } from "./helpers/shared/string.ts";
 
@@ -21,7 +22,31 @@ interface RulesStylesheet {
 const SPECIAL_CHARS = `!"#$%&'()*+./:;<=>?@[\\]^\`{|}~`;
 
 const _rules = new Map<string, RulesStylesheet[]>();
-const _rulesInUse = [];
+const _rulesInUse: string[] = [];
+
+const customMediaQueries: OBJECT<ARRAY<string>> = {
+  ".xs\\:@media (min-width:1px) and (max-width:321px)": [],
+  ".xs\\*\\:@media (min-width:321px)": [],
+  ".\\*xs\\:@media (max-width:321px)": [],
+  ".sm\\:@media (min-width:321px) and (max-width:376px)": [],
+  ".sm\\*\\:@media (min-width:376px)": [],
+  ".\\*sm\\:@media (max-width:376px)": [],
+  ".md\\:@media (min-width:376px) and (max-width:426px)": [],
+  ".md\\*\\:@media (min-width:426px)": [],
+  ".\\*md\\:@media (max-width:426px)": [],
+  ".lg\\:@media (min-width:426px) and (max-width:769px)": [],
+  ".lg\\*\\:@media (min-width:769px)": [],
+  ".\\*lg\\:@media (max-width:769px)": [],
+  ".xl\\:@media (min-width:769px) and (max-width:1025px)": [],
+  ".xl\\*\\:@media (min-width:1025px)": [],
+  ".\\*xl\\:@media (max-width:1025px)": [],
+  ".xxl\\:@media (min-width:1025px) and (max-width:1441px)": [],
+  ".xxl\\*\\:@media (min-width:1441px)": [],
+  ".\\*xxl\\:@media (max-width:1441px)": [],
+  ".s4K\\:@media (min-width:1441px) and (max-width:2561px)": [],
+  ".s4K\\*\\:@media (min-width:2561px)": [],
+  ".\\*s4K\\:@media (max-width:2561px)": [],
+};
 
 function escapeSelector(
   $$1: string,
@@ -48,7 +73,6 @@ export async function loadStyle(url: string) {
 
   const style = await response.text();
 
-  // @ts-expect-error
   const rules = style?.matchAll(
     /(\/\*[\s\S]*?\*\/|[^}{;\/]+\{[^{}]*\}|;|}|[^}{;\*]+\{)/gm,
   );
@@ -60,12 +84,12 @@ export async function loadStyle(url: string) {
 
     const [, body] = rule.split(/[{}]/);
     const selectors = rule.match(/^\..*/mg)
-      .map((w: string) => w.trim().replace(/\s*\{/, ""));
+      ?.map((w: string) => w.trim().replace(/\s*\{/, "")) || [];
 
     for (let selector of selectors) {
       const [id, params] = selector.split(":param");
       const types = params.split(/[^\w]/).filter(Boolean);
-      const state = [];
+      const state: any[] = [];
 
       const _selector = id.replace(
         /[:](focus|hover)$/, // TODO: améliorer cette partie
@@ -121,10 +145,12 @@ const manageBody = (types: string[], body: string) => {
 
 export function setStyle($el: string | Element) {
   if (typeof $el === "string") {
-    $el = document.querySelector($el);
+    const selector = $el;
+    $el = document.querySelector(selector) as Element;
+    if (!$el) throw new Error("Le sélecteur " + selector + " est introuvable.");
   }
 
-  $el.querySelectorAll("*")
+  (<Element> $el).querySelectorAll("*")
     .forEach(($el) => {
       createObserver($el);
       applyStyle($el.classList);
@@ -226,34 +252,30 @@ const applyStyle = (classList: DOMTokenList) => {
 
     const $styleMQElement = document.querySelector("#mq-custom-css");
 
+    $styleElement!.textContent += "\n" + stylesheet;
+
     const stylesheetForMQ = stylesheet.slice(1);
 
-    const customMediaQueries = [
-      `@media (min-width:1px) and (max-width:321px){.xs\\:${stylesheetForMQ};}`,
-      `@media (min-width:321px){.xs\\*\\:${stylesheetForMQ}; }`,
-      `@media (max-width:321px){.\\*xs\\:${stylesheetForMQ};}`,
-      `@media (min-width:321px) and (max-width:376px){.sm\\:${stylesheetForMQ};}`,
-      `@media (min-width:376px){.sm\\*\\:${stylesheetForMQ};}`,
-      `@media (max-width:376px){.\\*sm\\:${stylesheetForMQ};}`,
-      `@media (min-width:376px) and (max-width:426px){.md\\:${stylesheetForMQ};}`,
-      `@media (min-width:426px){.md\\*\\:${stylesheetForMQ};}`,
-      `@media (max-width:426px){.\\*md\\:${stylesheetForMQ};}`,
-      `@media (min-width:426px) and (max-width:769px){.lg\\:${stylesheetForMQ};}`,
-      `@media (min-width:769px){.lg\\*\\:${stylesheetForMQ};}`,
-      `@media (max-width:769px){.\\*lg\\:${stylesheetForMQ};}`,
-      `@media (min-width:769px) and (max-width:1025px){.xl\\:${stylesheetForMQ};}`,
-      `@media (min-width:1025px){.xl\\*\\:${stylesheetForMQ};}`,
-      `@media (max-width:1025px){.\\*xl\\:${stylesheetForMQ};}`,
-      `@media (min-width:1025px) and (max-width:1441px){.xxl\\:${stylesheetForMQ};}`,
-      `@media (min-width:1441px){.xxl\\*\\:${stylesheetForMQ};}`,
-      `@media (max-width:1441px){.\\*xxl\\:${stylesheetForMQ};}`,
-      `@media (min-width:1441px) and (max-width:2561px){.s4K\\:${stylesheetForMQ};}`,
-      `@media (min-width:2561px){.s4K\\*\\:${stylesheetForMQ};}`,
-      `@media (max-width:2561px){.\\*s4K\\:${stylesheetForMQ};}`,
-    ].join("\n");
+    const stylesheetForMQMapper = Object.keys(customMediaQueries).map((_mq) => {
+      const values = customMediaQueries[_mq];
+      const [mqrule, ...rules] = _mq.split(/(@)/);
 
-    $styleElement!.textContent += "\n" + stylesheet;
-    $styleMQElement!.textContent += "\n" + customMediaQueries;
+      const rule = mqrule + stylesheetForMQ;
+      if (!values.includes(rule)) {
+        customMediaQueries[_mq].push(mqrule + stylesheetForMQ);
+      }
+
+      let stylesheetMQ = [
+        rules.join(""),
+        "{",
+        customMediaQueries[_mq].join("\n"),
+        "}",
+      ];
+
+      return stylesheetMQ.join("\n");
+    });
+
+    $styleMQElement!.textContent = "\n" + stylesheetForMQMapper.join("\n");
   };
 
   const _buildStyle = (
@@ -270,8 +292,10 @@ const applyStyle = (classList: DOMTokenList) => {
   }
 
   for (let i = 0; i < classList.length; i++) {
-    const className = classList[i];
+    let className = classList[i];
     if (className.length === 1) continue;
+
+    className = className.replace(/^\*?(xs|sm|md|lg|xxl|xl|s4K)\*?:/, "");
 
     if (_rulesInUse.includes(className)) {
       continue;
