@@ -97,7 +97,11 @@ export async function loadStyle(url: string) {
   const $styleElement = document.createElement("style");
   $styleElement.id = "custom-css";
   $styleElement.dataset.src = url;
+  const $styleMQElement = document.createElement("style");
+  $styleMQElement.id = "mq-custom-css";
+  $styleMQElement.dataset.src = url;
   document.head.appendChild($styleElement);
+  document.head.appendChild($styleMQElement);
 }
 
 const manageBody = (types: string[], body: string) => {
@@ -219,7 +223,37 @@ const applyStyle = (classList: DOMTokenList) => {
     if ($styleElement!.textContent!.indexOf(stylesheet) >= 0) {
       return;
     }
+
+    const $styleMQElement = document.querySelector("#mq-custom-css");
+
+    const stylesheetForMQ = stylesheet.slice(1);
+
+    const customMediaQueries = [
+      `@media (min-width:1px) and (max-width:321px){.xs\\:${stylesheetForMQ};}`,
+      `@media (min-width:321px){.xs\\*\\:${stylesheetForMQ}; }`,
+      `@media (max-width:321px){.\\*xs\\:${stylesheetForMQ};}`,
+      `@media (min-width:321px) and (max-width:376px){.sm\\:${stylesheetForMQ};}`,
+      `@media (min-width:376px){.sm\\*\\:${stylesheetForMQ};}`,
+      `@media (max-width:376px){.\\*sm\\:${stylesheetForMQ};}`,
+      `@media (min-width:376px) and (max-width:426px){.md\\:${stylesheetForMQ};}`,
+      `@media (min-width:426px){.md\\*\\:${stylesheetForMQ};}`,
+      `@media (max-width:426px){.\\*md\\:${stylesheetForMQ};}`,
+      `@media (min-width:426px) and (max-width:769px){.lg\\:${stylesheetForMQ};}`,
+      `@media (min-width:769px){.lg\\*\\:${stylesheetForMQ};}`,
+      `@media (max-width:769px){.\\*lg\\:${stylesheetForMQ};}`,
+      `@media (min-width:769px) and (max-width:1025px){.xl\\:${stylesheetForMQ};}`,
+      `@media (min-width:1025px){.xl\\*\\:${stylesheetForMQ};}`,
+      `@media (max-width:1025px){.\\*xl\\:${stylesheetForMQ};}`,
+      `@media (min-width:1025px) and (max-width:1441px){.xxl\\:${stylesheetForMQ};}`,
+      `@media (min-width:1441px){.xxl\\*\\:${stylesheetForMQ};}`,
+      `@media (max-width:1441px){.\\*xxl\\:${stylesheetForMQ};}`,
+      `@media (min-width:1441px) and (max-width:2561px){.s4K\\:${stylesheetForMQ};}`,
+      `@media (min-width:2561px){.s4K\\*\\:${stylesheetForMQ};}`,
+      `@media (max-width:2561px){.\\*s4K\\:${stylesheetForMQ};}`,
+    ].join("\n");
+
     $styleElement!.textContent += "\n" + stylesheet;
+    $styleMQElement!.textContent += "\n" + customMediaQueries;
   };
 
   const _buildStyle = (
