@@ -150,6 +150,13 @@ export function setStyle($el: string | Element) {
     if (!$el) throw new Error("Le sélecteur " + selector + " est introuvable.");
   }
 
+  if (
+    $el.nodeType === Node.COMMENT_NODE ||
+    $el.nodeType === Node.TEXT_NODE
+  ) {
+    return;
+  }
+
   (<Element> $el).querySelectorAll("*")
     .forEach(($el) => {
       createObserver($el);
@@ -159,16 +166,14 @@ export function setStyle($el: string | Element) {
 
 const createObserver = ($el: HTMLElement | Node) => {
   const observer = new MutationObserver(function (entries) {
-    const [$firstEntry] = entries;
+    entries.forEach((entry) => {
+      if (entry.addedNodes.length > 0) {
+        entry.addedNodes.forEach((el) => setStyle(<HTMLElement> el));
+        return;
+      }
 
-    if ($firstEntry.addedNodes.length > 0) {
-      $firstEntry.addedNodes.forEach((el) => {
-        setStyle(<HTMLElement> el);
-      });
-      return;
-    }
-
-    applyStyle((<HTMLElement> $firstEntry.target).classList);
+      applyStyle((<HTMLElement> entry.target).classList);
+    });
   });
 
   observer.observe($el, {
