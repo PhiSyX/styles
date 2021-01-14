@@ -1,30 +1,32 @@
+@import "./mixins";
+
 @mixin --use-text {
-  .text-small { font-size: var(--font-size_sm); }
-  .text-normal { font-size: var(--font-size); }
+  @include --use-all-mq("text-small") { font-size: var(--font-size_sm); }
+  @include --use-all-mq("text-normal") { font-size: var(--font-size); }
 
-  .text-bold { font-weight: bold; }
-  .text-italic { font-style: italic; }
-  .text-underline { text-decoration: underline; }
+  @include --use-all-mq("text-bold") { font-weight: bold; }
+  @include --use-all-mq("text-italic") { font-style: italic; }
+  @include --use-all-mq("text-underline") { text-decoration: underline; }
 
-  .placeholder { opacity: .5; }
+  @include --use-all-mq("placeholder") { opacity: .5; }
 
   $text-align: (left, center, right);
   @each $align in $text-align {
-    .text-#{$align} { text-align: $align; }
+    @include --use-all-mq("text-#{$align}") { text-align: $align; }
   }
 
   $vertical-align: (top, middle, bottom);
   @each $align in $vertical-align {
-    .v-align\:#{$align} { vertical-align: $align; }
+    @include --use-all-mq("v-align:#{$align}") { vertical-align: $align; }
   }
 
   $user-select: (none, text, all);
   @each $select in $user-select {
-    .u-select\:#{$select} { user-select: $select; }
+    @include --use-all-mq("u-select:#{$select}") { user-select: $select; }
   }
 
   $pointer-events: (none, auto);
   @each $pvent in $pointer-events {
-    .p-events\:#{$pvent} { pointer-events: $pvent; }
+    @include --use-all-mq("p-events:#{$pvent}") { pointer-events: $pvent; }
   }
 }

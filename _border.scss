@@ -1,5 +1,5 @@
 @import "./mixins";
 
 @mixin --use-border {
-  .border\:none { border: none; }
+  @include --use-all-mq("border:none") { border: none; }
 }

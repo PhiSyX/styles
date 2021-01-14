@@ -1,7 +1,8 @@
+@import "./mixins";
+
 @mixin --use-cursor {
   $cursors: auto, grab, grabbing, not-allowed, pointer, text;
-
   @each $cursor in $cursors {
-    .c-#{$cursor} { cursor: $cursor; }
+    @include --use-all-mq("c-#{$cursor}") { cursor: $cursor; }
   }
 }

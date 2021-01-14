@@ -1,3 +1,6 @@
+@import "./functions";
+@import "./breakpoint";
+
 @mixin --use-all-mq-xs($className, $extend: false) {
   @include --use-mq-xs {
     .xs\:#{$className} {
@@ -198,5 +201,45 @@
       }
       @content;
     }
+  }
+}
+
+@mixin --use-all-mq($className, $extend: false) {
+  $className: escape_selector($className);
+
+  @include --use-all-mq-xs($className, $extend) {
+    @content;
+  }
+
+  @include --use-all-mq-sm($className, $extend) {
+    @content;
+  }
+
+  @include --use-all-mq-md($className, $extend) {
+    @content;
+  }
+
+  @include --use-all-mq-lg($className, $extend) {
+    @content;
+  }
+
+  @include --use-all-mq-xl($className, $extend) {
+    @content;
+  }
+
+  @include --use-all-mq-xxl($className, $extend) {
+    @content;
+  }
+
+  @include --use-all-mq-4k($className, $extend) {
+    @content;
+  }
+
+  .#{$className} {
+    @if ($extend != false) {
+      @extend .#{$extend};
+    }
+
+    @content;
   }
 }

@@ -1,3 +1,5 @@
+@import "./mixins";
+
 @mixin --use-scroll {
   :root {
     --scrollbar_size: 10px;
@@ -13,7 +15,7 @@
     background: var(--scrollbar_bg);
   }
 
-  .scroll {
+  @include --use-all-mq("scroll") {
     width: 100%;
     height: 100%;
 
@@ -25,7 +27,7 @@
     }
   }
 
-  .scroll\[hidden\] {
+  @include --use-all-mq("scroll[hidden]") {
     &::-webkit-scrollbar {
       width: 0px !important;
       height: 0px !important;
@@ -37,7 +39,7 @@
     }
   }
 
-  .scroll\:x {
+  @include --use-all-mq("scroll:x") {
     width: 100%;
 
     overflow-x: auto !important;
@@ -50,7 +52,7 @@
     }
   }
 
-  .scroll\:y {
+  @include --use-all-mq("scroll:y") {
     height: 100%;
 
     overflow-x: hidden;
@@ -63,11 +65,11 @@
     }
   }
 
-  .scroll\:hidden {
+  @include --use-all-mq("scroll:hidden") {
     overflow: hidden;
   }
 
-  .auto\:scroll {
+  @include --use-all-mq("auto:scroll") {
     --direction: ltr;
     --text-overflow: ellipsis;
 

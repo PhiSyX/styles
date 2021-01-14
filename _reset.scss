@@ -1,21 +1,22 @@
+@import "./mixins";
+
 @mixin --use-reset {
-  .btn\:reset {
+  @include --use-all-mq("btn:reset") {
     outline: none;
     border: 0;
     background: transparent;
   }
 
-  .input\:reset {
+  @include --use-all-mq("input:reset") {
     outline: none;
     border: 0;
     background: transparent;
     &[type="text"] { cursor: text; }
   }
 
-  .list\:reset {
+  @include --use-all-mq("list:reset") {
     margin: 0;
     padding: 0;
-
     list-style: none;
   }
 }

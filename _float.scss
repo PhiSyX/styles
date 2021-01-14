@@ -1,12 +1,12 @@
 @import "./functions";
+@import "./mixins";
 
 @mixin --use-float {
   $positions: (left, right);
-
   @each $position in $positions {
     $first-letter: first_char($position);
-    .float-#{$first-letter} { float: $position; }
+    @include --use-all-mq("float-#{$first-letter}") { float: $position; }
   }
 
-  .clearfix { clear: both; }
+  @include --use-all-mq("clearfix") { clear: both; }
 }

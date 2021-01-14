@@ -1,4 +1,4 @@
-import type { ARRAY, OBJECT } from "./helpers/shared/types.ts";
+import type { ARRAY, OBJECT } from "./helpers/shared/types.d.ts";
 import { iswmcs } from "./helpers/shared/lang.ts";
 import { escapeCharacters, toString } from "./helpers/shared/string.ts";
 

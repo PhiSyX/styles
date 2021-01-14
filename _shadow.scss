@@ -1,9 +1,11 @@
+@import "./mixins";
+
 @mixin --use-shadow {
-  .box\:shadow { // TODO: créer une variable qui change en fonction du theme
+  @include --use-all-mq("box:shadow") { // TODO: créer une variable qui change en fonction du theme
     box-shadow: 2px 2px 4px rgba(black, 0.25);
   }
 
-  .\*\:shadow {
+  @include --use-all-mq("*:shadow") {
     --shadow-color: currentColor;
     filter: drop-shadow(var(--shadow-color) 0px 0px 6px);
   }

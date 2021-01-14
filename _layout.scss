@@ -1,3 +1,5 @@
+@import "./mixins";
+
 @mixin --use-frame-iphone {
   .iphone5-frame {
     min-width: 320px;
@@ -41,46 +43,42 @@
 }
 
 @mixin --use-width {
-  .w\:auto { width: auto; }
-  .w\:screen { width: 100vw; }
-  .w\:full { width: 100%; }
-
-  .min-w\:auto { min-width: auto; }
-  .min-w\:full { min-width: 100%; }
-
-  .max-w\:auto { max-width: auto; }
-  .max-w\:full { max-width: 100%; }
+  @include --use-all-mq("w:auto") { width: auto; }
+  @include --use-all-mq("w:screen") { width: 100vw; }
+  @include --use-all-mq("w:full") { width: 100%; }
+  @include --use-all-mq("min-w:auto") { min-width: auto; }
+  @include --use-all-mq("min-w:full") { min-width: 100%; }
+  @include --use-all-mq("max-w:auto") { max-width: auto; }
+  @include --use-all-mq("max-w:full") { max-width: 100%; }
 }
 
 @mixin --use-height {
-  .h\:auto { height: auto; }
-  .h\:screen { height: 100vh; }
-  .h\:full { height: 100%; }
-
-  .min-h\:auto { min-height: auto; }
-  .min-h\:full { min-height: 100%; }
-
-  .max-h\:auto { max-height: auto; }
-  .max-h\:full { max-height: 100%; }
+  @include --use-all-mq("h:auto") { height: auto; }
+  @include --use-all-mq("h:screen") { height: 100vh; }
+  @include --use-all-mq("h:full") { height: 100%; }
+  @include --use-all-mq("min-h:auto") { min-height: auto; }
+  @include --use-all-mq("min-h:full") { min-height: 100%; }
+  @include --use-all-mq("max-h:auto") { max-height: auto; }
+  @include --use-all-mq("max-h:full") { max-height: 100%; }
 }
 
 @mixin --use-display {
-  .d-b  { display: block; }
-  .d-i  { display: inline; }
-  .d-ib { display: inline-block; }
+  @include --use-all-mq("d-b")  { display: block; }
+  @include --use-all-mq("d-i")  { display: inline; }
+  @include --use-all-mq("d-ib") { display: inline-block; }
 }
 
 @mixin --use-contain {
   $contains: (content, initial, size);
   @each $contain in $contains {
-    .contain\:#{$contain} { contain: $contain; }
+    @include --use-all-mq("contain:#{$contain}") { contain: $contain; }
   }
 }
 
 @mixin --use-position {
-  .pos-r { position: relative; }
+  @include --use-all-mq("pos-r") { position: relative; }
 
-  .pos-a\:full {
+  @include --use-all-mq("pos-a:full") {
     position: absolute;
     top: 0;
     right: 0;

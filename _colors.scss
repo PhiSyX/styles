@@ -409,7 +409,6 @@ $variants-globals: (
 @mixin --add-colors-for($colorName: "", $variants: ()) {
   @each $variant, $color in $variants {
     --color-#{"" + $colorName}#{"" + $variant}: #{$color};
-
     --color-#{"" + $colorName}#{"" + $variant}_rgb: #{red($color)},#{green($color)},#{blue($color)};
 
     @if $variant == 500 {

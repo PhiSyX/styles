@@ -1,46 +1,36 @@
 @import "./functions";
+@import "./mixins";
 
 @mixin --extend-flex {
-  &,
-  &\! {
-    @extend .flex;
-    @content;
-  }
-
-  &\* {
-    @extend .flex\*;
-    @content;
-  }
-
-  &\! { @extend .flex\!; }
+  &, &\! { display: flex; }
+  &\*    { display: inline-flex; }
+  &\!    { flex-direction: column !important; }
 }
 
 @mixin --use-flex {
-  .flex {
+  @include --use-all-mq("flex") {
     &, &\! { display: flex; }
     &\*    { display: inline-flex; }
     &\!    { flex-direction: column !important; }
   }
 
-  .flex-list {
-    @include --extend-flex {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      flex-wrap: wrap;
-    }
+  @include --use-all-mq("flex-list") {
+    @include --extend-flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex-wrap: wrap;
   }
 
-  .flex-center {
-    @include --extend-flex {
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+  @include --use-all-mq("flex-center") {
+    @include --extend-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
-  .flex-grow { flex-grow: 1; }
-  .flex-wrap { flex-wrap: wrap; }
+  @include --use-all-mq("flex-grow") { flex-grow: 1; }
+  @include --use-all-mq("flex-wrap") { flex-wrap: wrap; }
 
   // Flex Justify Content
 
@@ -54,10 +44,9 @@
     $selector: str_replace($value, "space-", "");
     $selector: str_replace($selector, "flex-", "");
 
-    .flex\:jc-#{$selector} {
-      @include --extend-flex {
-        justify-content: #{$value};
-      }
+    @include --use-all-mq("flex:jc-#{$selector}") {
+      @include --extend-flex;
+      justify-content: #{$value};
     }
   }
 
@@ -72,10 +61,9 @@
   @each $value in $aitems {
     $selector: str_replace($value, "flex-", "");
 
-    .flex\:ai-#{$selector} {
-      @include --extend-flex {
-        align-items: #{$value};
-      }
+    @include --use-all-mq("flex:ai-#{$selector}") {
+      @include --extend-flex;
+      align-items: #{$value};
     }
   }
 }
