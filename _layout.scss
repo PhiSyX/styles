@@ -40,6 +40,21 @@
   @include --use-display;
   @include --use-position;
   @include --use-contain;
+
+  @include --use-all-mq("resizable") {
+    overflow: hidden;
+    resize: both;
+  }
+
+  @include --use-all-mq("resizable:x") {
+    overflow-x: hidden;
+    resize: horizontal;
+  }
+
+  @include --use-all-mq("resizable:y") {
+    overflow-y: hidden;
+    resize: vertical;
+  }
 }
 
 @mixin --use-width {
