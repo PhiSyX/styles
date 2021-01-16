@@ -48,6 +48,11 @@
   @include --use-all-mq("hidden") { display: none; }
   @include --use-all-mq("shown") { display: block; }
 
+  $visibility: (collapse, hidden, visible);
+  @each $v in $visibility {
+    @include --use-all-mq("visibility-#{$v}") { visibility: $v; }
+  }
+
   @include --use-blur;
   @include --sr-only;
 }
