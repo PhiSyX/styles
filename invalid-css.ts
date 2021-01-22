@@ -157,7 +157,7 @@ export function setStyle($el: string | Element) {
     return;
   }
 
-  (<Element> $el).querySelectorAll("*")
+  [$el, ...Array.from((<Element> $el).querySelectorAll("*"))]
     .forEach(($el) => {
       createObserver($el);
       applyStyle($el.classList);
