@@ -362,6 +362,7 @@ $variants-globals: (
   brown,
   grey,
   blue-grey,
+  globals,
 )) {
   @each $variant in $variants {
     @if $variant == red {
