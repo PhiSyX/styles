@@ -94,3 +94,11 @@
 
   @return "data:image/svg+xml," + $string;
 }
+
+@function hex2rgb($hexColor) {
+  @return "#{red($hexColor)},#{green($hexColor)},#{blue($hexColor)}";
+}
+
+@function hex2hsl($hexColor) {
+  @return "#{hue($hexColor)},#{saturation($hexColor)},#{lightness($hexColor)}";
+}

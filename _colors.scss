@@ -1,3 +1,5 @@
+@import "./functions";
+
 // Liste des couleurs
 
 $red: #f44336 !default;
@@ -409,11 +411,13 @@ $variants-globals: (
 @mixin --add-colors-for($colorName: "", $variants: ()) {
   @each $variant, $color in $variants {
     --color-#{"" + $colorName}#{"" + $variant}: #{$color};
-    --color-#{"" + $colorName}#{"" + $variant}_rgb: #{red($color)},#{green($color)},#{blue($color)};
+    --color-#{"" + $colorName}#{"" + $variant}_rgb: #{hex2rgb($color)};
+    --color-#{"" + $colorName}#{"" + $variant}_hsl: #{hex2hsl($color)};
 
     @if $variant == 500 {
       --color-#{"" + $colorName}: #{$color};
-      --color-#{"" + $colorName}_rgb: #{red($color)},#{green($color)},#{blue($color)};
+      --color-#{"" + $colorName}_rgb: #{hex2rgb($color)};
+      --color-#{"" + $colorName}_hsl: #{hex2hsl($color)};
     }
   }
 }
