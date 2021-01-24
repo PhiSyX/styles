@@ -35,6 +35,7 @@
 }
 
 @mixin --use-layout {
+  @include --use-margin;
   @include --use-width;
   @include --use-height;
   @include --use-display;
@@ -55,6 +56,10 @@
     overflow-y: hidden;
     resize: vertical;
   }
+}
+
+@mixin --use-margin {
+  @include --use-all-mq("m:auto") { margin: 0 auto; }
 }
 
 @mixin --use-width {
