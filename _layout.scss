@@ -60,6 +60,7 @@
 
 @mixin --use-margin {
   @include --use-all-mq("m:auto") { margin: 0 auto; }
+  @include --use-all-mq("mx:auto") { margin: auto; }
 }
 
 @mixin --use-width {
