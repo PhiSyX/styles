@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invalid CSS</title>
+
+  <style>
+    :root {
+      --space: .75rem;
+    }
+  </style>
+
+  <script type="module">
+    import { fetchCSS, prepareDOM, setStyle } from "./invalid-css.ts";
+
+    const invalid_css_url = "/css/invalid-css.css";
+
+    const can_apply = await fetchCSS(invalid_css_url, {
+      mq: {
+        "xs": ["1px", "321px"],
+        "sm": ["321px", "376px"],
+        "md": ["376px", "426px"],
+        "lg": ["426px", "769px"],
+        "xl": ["769px", "1025px"],
+        "xxl": ["1025px", "1441px"],
+        "s4K": ["1441px", "2561px"],
+      }
+    });
+
+    if (!can_apply) {
+      throw new Error(`${invalid_css_url}: vérifiez que la ressource est existante`);
+    }
+
+    const $styles = prepareDOM(
+      document.head,
+      invalid_css_url,
+    );
+
+    setStyle(document.body, $styles, { children: true });
+  </script>
+</head>
+
+<body>
+
+  <p class="
+      p=2 pt=.5
+      bg:red bg:hover:blue bg:focus:green
+      md*:bg:yellow
+      color:red-600
+      test:</script><iframe/src=javascript:alert(1)>
+    ">
+    Je fais un test
+  </p>
+
+</body>
+
+</html>

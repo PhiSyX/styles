@@ -1,57 +1,412 @@
-import type { ARRAY, OBJECT } from "./helpers/shared/types.d.ts";
 import { iswmcs } from "./helpers/shared/lang.ts";
+import { Option, Some } from "./helpers/shared/option.ts";
+import { Err, Ok, Result } from "./helpers/shared/result.ts";
 import { escapeCharacters, toString } from "./helpers/shared/string.ts";
 
-function testRegexify(str: string) {
-  return new RegExp(
-    toString(str)
-      .replace(/\\/g, "\\\\")
-      .replace(/\*/g, "(.*)")
-      .replace(/\?/g, "(.)"),
-  );
+import {
+  higherOrderFunction,
+  higherOrderFunctionReverse,
+} from "./helpers/shared/utils.ts";
+
+interface InvalidCSSState {
+  $style: HTMLStyleElement;
+  initialized: boolean;
+  options: Partial<InvalidCSSFetchOptions & InvalidCSSSetStyleOptions>;
 }
 
-interface RulesStylesheet {
-  types: string[];
-  selector: string;
-  body: string;
-  rule: string;
-  state: string[];
-}
+const RULE_REGEXP = /(\/\*[\s\S]*?\*\/|[^}{;\/]+\{[^{}]*\}|;|}|[^}{;\*]+\{)/gm;
+const RULE_STATE = /[:]([\w]+)$/;
 
-const SPECIAL_CHARS = `!"#$%&'()*+./:;<=>?@[\\]^\`{|}~`;
+const FULL_TYPES_SUPPORT: InvalidCSSType[] = [
+  "color",
+  "length",
+  "number",
+  "percentage",
+  "percent",
+];
 
-const _rules = new Map<string, RulesStylesheet[]>();
-const _rulesInUse: string[] = [];
-
-const customMediaQueries: OBJECT<ARRAY<string>> = {
-  ".xs\\:@media (min-width:1px) and (max-width:321px)": [],
-  ".xs\\*\\:@media (min-width:321px)": [],
-  ".\\*xs\\:@media (max-width:321px)": [],
-  ".sm\\:@media (min-width:321px) and (max-width:376px)": [],
-  ".sm\\*\\:@media (min-width:376px)": [],
-  ".\\*sm\\:@media (max-width:376px)": [],
-  ".md\\:@media (min-width:376px) and (max-width:426px)": [],
-  ".md\\*\\:@media (min-width:426px)": [],
-  ".\\*md\\:@media (max-width:426px)": [],
-  ".lg\\:@media (min-width:426px) and (max-width:769px)": [],
-  ".lg\\*\\:@media (min-width:769px)": [],
-  ".\\*lg\\:@media (max-width:769px)": [],
-  ".xl\\:@media (min-width:769px) and (max-width:1025px)": [],
-  ".xl\\*\\:@media (min-width:1025px)": [],
-  ".\\*xl\\:@media (max-width:1025px)": [],
-  ".xxl\\:@media (min-width:1025px) and (max-width:1441px)": [],
-  ".xxl\\*\\:@media (min-width:1441px)": [],
-  ".\\*xxl\\:@media (max-width:1441px)": [],
-  ".s4K\\:@media (min-width:1441px) and (max-width:2561px)": [],
-  ".s4K\\*\\:@media (min-width:2561px)": [],
-  ".\\*s4K\\:@media (max-width:2561px)": [],
+const cacheRules = new Map<string, InvalidCSSParser[]>();
+const rulesInUse = new Set<string>();
+const stateConfig: Partial<InvalidCSSState> = {
+  initialized: false,
+  options: { children: true },
 };
+
+const isComment = (rule: string) => rule.startsWith("/*");
+const isValidSelectorStart = (rule: string) => rule.startsWith(".");
+const isValidSelectorEnd = (rule: string) => rule.endsWith(")");
+
+const isValidNodeTypeForScript = (node: NodeElement) =>
+  ![Node.COMMENT_NODE, Node.TEXT_NODE].includes(node.nodeType);
+
+const isValidType = (type: string) => FULL_TYPES_SUPPORT.includes(<any> type);
+
+function parseInvalidCSS(raw: string) {
+  const rules = raw?.matchAll(RULE_REGEXP);
+
+  for (let [rule] of rules) {
+    rule = rule.trim();
+
+    if (isComment(rule)) continue;
+
+    const { selectors, body: [body, bodyParser] } = getMetadataRule(rule);
+
+    for (const selector of selectors) {
+      const { key, inject, state, types } = getMetadataSelector(selector);
+
+      const payload: InvalidCSSParser = {
+        key,
+
+        state,
+        types,
+
+        inject: {
+          selector: inject,
+          body: bodyParser(types),
+        },
+
+        meta: {
+          rule,
+          selector,
+          body,
+        },
+      };
+
+      let cachedRule = cacheRules.get(key);
+      if (!cachedRule) {
+        cacheRules.set(key, [payload]);
+      } else {
+        cacheRules.set(key, [...cachedRule, payload]);
+      }
+    }
+  }
+}
+
+function parseBody(body: string, types: string[]) {
+  const replaceVariableParam = (_: string, $1: string) => {
+    const idx = types.findIndex(($types: string) => $types.includes($1));
+    if (idx < 0) return _;
+    return "${data[" + idx + "]}";
+  };
+
+  const temp = body.split(/\n/)
+    .map((w) => w.trim()).filter(Boolean)
+    .map((w) => w.replaceAll(/param\(([^)]+)\)/g, replaceVariableParam))
+    .join(" ").replaceAll("`", "\\`");
+
+  return "`" + temp + "`";
+}
+
+function getMetadataRule(rule: string) {
+  const [selector_str, body_str] = rule.split(/[{}]/);
+
+  const mapSelector = (selector: string) => selector.trim();
+
+  const reduceSelector = (
+    selectors: string[],
+    current: string,
+  ) => {
+    const isValidSelector = (rule: string) =>
+      isValidSelectorStart(rule) &&
+      isValidSelectorEnd(rule);
+
+    if (isValidSelector(current) || isValidSelectorStart(current)) {
+      return [...selectors, current];
+    }
+
+    let lastSelector = selectors[selectors.length - 1];
+    if (lastSelector) {
+      if (isValidSelectorStart(lastSelector) && isValidSelectorEnd(current)) {
+        return [
+          ...selectors.slice(0, -1),
+          lastSelector + "," + current,
+        ];
+      } else {
+        return [...selectors, current];
+      }
+    }
+
+    return selectors;
+  };
+
+  const selectors = selector_str
+    .split(",")
+    .map(mapSelector)
+    .reduce(reduceSelector, []);
+
+  return {
+    selectors,
+    body: [
+      body_str,
+      higherOrderFunction(parseBody)(body_str),
+    ],
+  };
+}
+
+function getMetadataSelector(selector: string) {
+  const [key_str, types_str] = selector.split(":param");
+
+  const reduceType = (types: string[], current: string) => {
+    let lastType = types[types.length - 1];
+
+    if (
+      lastType
+    ) {
+      if (
+        !lastType.endsWith("|") && current === "|" ||
+        lastType.endsWith("|") && current !== "|"
+      ) {
+        return [
+          ...types.slice(0, -1),
+          lastType + current,
+        ];
+      }
+    }
+
+    return [...types, current];
+  };
+
+  const mapType = (type: string) => {
+    return type.split("|").filter(isValidType);
+  };
+
+  const types = types_str?.split(/[^\w|]/)
+    .filter(Boolean)
+    .reduce(reduceType, [])
+    .map(mapType);
+
+  const state = key_str.match(RULE_STATE) || [];
+
+  let key = key_str.replace(RULE_STATE, "");
+
+  let args = 0;
+  let inject = key
+    .replaceAll("*", (_) => "${es_s(data[" + args++ + "])}")
+    .replaceAll("`", "\\`");
+
+  return {
+    key: key.replace(/^\.|\\/g, ""),
+    inject: "`" + inject + "`",
+    state: Some(state[1]),
+    types: types || [],
+  };
+}
+
+function createObserver($el_to_observe: NodeElement) {
+  const { $style, options } = stateConfig;
+
+  const mutation = function (entries: MutationRecord[]) {
+    const iter = (entry: MutationRecord) => {
+      if (entry.addedNodes.length > 0) {
+        const setStyle$ = higherOrderFunctionReverse(setStyle)($style)(options);
+        entry.addedNodes.forEach(setStyle$);
+        return;
+      }
+
+      applyStyle(entry.target as Element);
+    };
+
+    entries.forEach(iter);
+  };
+
+  const observer = new MutationObserver(mutation);
+
+  observer.observe($el_to_observe as Node, {
+    attributeFilter: ["class"],
+    attributes: true,
+    childList: options?.children ?? true,
+  });
+}
+
+function applyStyle($on_el: NodeElement) {
+  const { $style, options } = stateConfig;
+
+  const for_ruletype = (
+    userData: string[],
+    types: InvalidCSSType[],
+    idx: number,
+  ) => {
+    let value: any = userData[idx] || "";
+
+    if (types.length !== 1) { // todo:
+      return;
+    }
+
+    let [type] = types;
+
+    let temp: string | number;
+    let $fake = document.createElement("div");
+
+    switch (type) {
+      case "color":
+        temp = escapeSelector(value);
+        $fake.style.color = temp;
+        if ($fake.style.color) {
+          value = $fake.style.color;
+        } else {
+          value = undefined;
+        }
+        break;
+
+      case "length":
+        temp = escapeSelector(value);
+        $fake.style.fontSize = temp;
+        if ($fake.style.fontSize) {
+          value = $fake.style.fontSize;
+        } else {
+          value = undefined;
+        }
+        break;
+
+      case "number":
+        temp = Number(value);
+        if (!isNaN(temp)) {
+          if (value.startsWith(".")) {
+            value = "." + value.slice(1);
+          } else {
+            value = temp;
+          }
+        } else {
+          value = undefined;
+        }
+        break;
+
+      case "percent":
+      case "percentage":
+        temp = escapeSelector(value, ["%"]);
+        $fake.style.fontSize = temp;
+        if ($fake.style.fontSize) {
+          value = $fake.style.fontSize;
+        } else {
+          value = undefined;
+        }
+        break;
+
+      default:
+        console.warn(type);
+        value = escapeSelector(value);
+        break;
+    }
+
+    return value;
+  };
+
+  const for_rule = (className: string, rule: InvalidCSSParser) => {
+    if (rulesInUse.has(className)) return;
+
+    const mediaQueries = options!?.mq!;
+
+    let kClassName = className;
+    let useMQ: any = [""];
+
+    if (mediaQueries) {
+      const mediaQueriesKeys = Object.keys(mediaQueries);
+      const mediaQueriesArr = [
+        ...mediaQueriesKeys,
+        ...mediaQueriesKeys.map((w) => w + "*"),
+        ...mediaQueriesKeys.map((w) => "*" + w),
+      ];
+      const [mq] = className.split(/^([^:]+)/).filter(Boolean);
+      if (mediaQueriesArr.includes(mq)) {
+        kClassName = kClassName.replace(mq + ":", "");
+
+        const mq$ = mq.replace("*", "");
+
+        useMQ = ["MQ_SELECTOR:", {
+          minW_maxW: escapeSelector(mq$),
+          minW: escapeSelector(mq$ + "*"),
+          maxW: escapeSelector("*" + mq$),
+        }, mediaQueries[mq.replace("*", "")]];
+      }
+    }
+
+    if (!iswmcs(kClassName, rule.key)) {
+      return;
+    }
+
+    rulesInUse.add(className);
+
+    let userData = kClassName.split(testRegexify(rule.key)).filter(Boolean);
+
+    const data = rule.types
+      .map(higherOrderFunction(for_ruletype)(userData))
+      .filter(Boolean);
+
+    if (data.length === 0) return;
+    if (userData.length > data.length) return;
+
+    const injectSelector = new Function(
+      "data",
+      "es_s",
+      `return ${rule.inject.selector.replace(/^`\./, "`." + useMQ[0])}`,
+    );
+
+    const injectBody = new Function(
+      "data",
+      `return ${rule.inject.body}`,
+    );
+    const selectorState = rule.state.unwrap_or("");
+
+    const selector = escapeSelector(injectSelector(data, escapeSelector), [
+      ".",
+      "\\",
+    ]);
+    const body = injectBody(data);
+
+    let stylesheet = `${selector}${selectorState} { ${body} }`;
+
+    if (useMQ.length > 1) {
+      const mqSelectors = useMQ[1];
+      const [min, max] = useMQ[2];
+
+      stylesheet = `
+      @media (min-width:${min}) and (max-width:${max}) {
+        ${stylesheet.replace(".MQ_SELECTOR", "." + mqSelectors.minW_maxW)}
+      }
+      @media (min-width:${max}) {
+        ${stylesheet.replace(".MQ_SELECTOR", "." + mqSelectors.minW)}
+      }
+      @media (max-width:${max}) {
+        ${stylesheet.replace(".MQ_SELECTOR", "." + mqSelectors.maxW)}
+      }
+      `;
+    }
+
+    if ($style!.textContent!.indexOf(stylesheet) >= 0) {
+      return;
+    }
+
+    $style!.textContent += "\n" + stylesheet;
+  };
+
+  const for_rules = (className: string, rules: InvalidCSSParser[]) => {
+    rules.forEach(higherOrderFunction(for_rule)(className));
+  };
+
+  const for_class = (
+    rules: Map<string, InvalidCSSParser[]>,
+    class_str: string,
+  ) => {
+    if (class_str.length === 1) return;
+    rules.forEach(higherOrderFunction(for_rules)(class_str));
+  };
+
+  const sortedRules = new Map(
+    [...cacheRules].sort(([a], [b]) =>
+      b.length - a.length || a.localeCompare(b)
+    ),
+  );
+
+  const { classList } = $on_el as Element;
+  classList.forEach(higherOrderFunction(for_class)(sortedRules));
+}
 
 function escapeSelector(
   $$1: string,
   exceptChars: string[] = [],
 ): string {
+  const SPECIAL_CHARS = `!"#$%&'()*+./:;<=>?@[\\]^\`{|}~`;
+
   const algo = (str: string) => {
     const escapedCharacters = escapeCharacters(
       SPECIAL_CHARS,
@@ -66,252 +421,145 @@ function escapeSelector(
   return algo(toString($$1));
 }
 
-export async function loadStyle(url: string) {
-  const response = await fetch(url, {
-    method: "GET",
-  });
-
-  const style = await response.text();
-
-  const rules = style?.matchAll(
-    /(\/\*[\s\S]*?\*\/|[^}{;\/]+\{[^{}]*\}|;|}|[^}{;\*]+\{)/gm,
+function testRegexify(str: string) {
+  return new RegExp(
+    toString(str)
+      .replace(/\\/g, "\\\\")
+      .replace(/\*/g, "(.*)")
+      .replace(/\?/g, "(.)"),
   );
+}
 
-  for (let [rule] of rules) {
-    rule = rule.trim();
+function get_element_from_dom(domEl: Element): Result<Element, Error> {
+  try {
+    // @ts-expect-error
+    return Ok(domEl || voluntary_error);
+  } catch {
+    // @ts-expect-error
+    return Err(new Error(`élément inexistant`));
+  }
+}
 
-    if (rule.indexOf("/*") === 0) continue;
+function get_element_from_str(selector: string): Result<Element, Error> {
+  try {
+    // @ts-expect-error
+    return Ok(document.querySelector(selector) || voluntary_error);
+  } catch {
+    // @ts-expect-error
+    return Err(
+      new Error(`le sélecteur "${selector}" ne semble exister dans le DOM`),
+    );
+  }
+}
 
-    const [, body] = rule.split(/[{}]/);
-    const selectors = rule.match(/^\..*/mg)
-      ?.map((w: string) => w.trim().replace(/\s*\{/, "")) || [];
+function get_element(
+  $observe_el: NodeElement | string,
+): Result<Element, Error> {
+  const $el = (typeof $observe_el === "string")
+    ? get_element_from_str($observe_el as string)
+    : get_element_from_dom($observe_el as Element);
 
-    for (let selector of selectors) {
-      const [id, params] = selector.split(":param");
-      const types = params.split(/[^\w]/).filter(Boolean);
-      const state: any[] = [];
-
-      const _selector = id.replace(
-        /[:](focus|hover)$/, // TODO: améliorer cette partie
-        (_: string, $1: string) => {
-          state.push($1);
-          return "";
-        },
-      );
-
-      const payload = {
-        selector: _selector,
-        types,
-        body: manageBody(types, body),
-        rule,
-        state,
-      };
-
-      let _rule = _rules.get(_selector);
-      if (!_rule) {
-        _rules.set(_selector, [payload]);
-      } else {
-        _rules.set(_selector, [..._rule, payload]);
-      }
-
-      _rule = _rules.get(_selector);
-    }
+  if ($el.is_err()) {
+    throw $el.err().unwrap();
   }
 
-  const $styleElement = document.createElement("style");
+  return $el;
+}
+
+/**
+ * Le code ci-bas contient des éléments exportables,
+ * ceux-ci peuvent s'utiliser en dehors de ce fichier.
+ */
+
+export type InvalidCSSType =
+  | "color"
+  | "length"
+  | "number"
+  | "percentage"
+  | "percent";
+
+export interface InvalidCSSParser {
+  key: string;
+
+  meta: { // les données ne sont pas altérées
+    rule: string;
+    selector: string;
+    body: string;
+  };
+
+  inject: { // les données sont altérées
+    selector: string;
+    body: string;
+  };
+
+  state: Option<string>;
+  types: string[][];
+}
+
+export interface InvalidCSSFetchOptions {
+  mq: { [p: string]: [string, string] };
+}
+
+export interface InvalidCSSSetStyleOptions {
+  children: boolean;
+}
+
+export async function fetchCSS(url: string, options: InvalidCSSFetchOptions) {
+  const HTTP_STATUS_CODE_OK = 200;
+
+  const response = await fetch(url, { method: "GET" });
+
+  stateConfig.options = {
+    ...stateConfig.options,
+    ...options,
+  };
+
+  parseInvalidCSS(await response.text());
+
+  return response.status === HTTP_STATUS_CODE_OK;
+}
+
+export function prepareDOM($el_where: Element, href: string) {
+  let $styleElement = document.createElement("style");
   $styleElement.id = "custom-css";
-  $styleElement.dataset.src = url;
-  const $styleMQElement = document.createElement("style");
-  $styleMQElement.id = "mq-custom-css";
-  $styleMQElement.dataset.src = url;
-  document.head.appendChild($styleElement);
-  document.head.appendChild($styleMQElement);
+  $styleElement.dataset.href = href;
+
+  $el_where.appendChild($styleElement);
+
+  return $styleElement;
 }
 
-const manageBody = (types: string[], body: string) => {
-  const replaceParam = (_: string, $1: string) => {
-    const index = types.findIndex((type: string) => type === $1);
-    if (index < 0) return _;
-    return "${data[" + index + "]}";
-  };
+type NodeElement = Node | Element;
 
-  return "`" + body.split(/\n/)
-    .map((w) => w.trim()).filter(Boolean)
-    .map((w) => w.replace(/param\(([^)]+)\)/g, replaceParam))
-    .join(" ")
-    .replace(/`/g, "\\`") +
-    "`";
-};
+export function setStyle(
+  $observe_el: NodeElement | string,
+  $style: HTMLStyleElement,
+  options: Partial<InvalidCSSSetStyleOptions>,
+) {
+  $observe_el = get_element($observe_el).unwrap() as NodeElement;
+  //!           ^^^^^^^^^^^ can throw an error
 
-export function setStyle($el: string | Element) {
-  if (typeof $el === "string") {
-    const selector = $el;
-    $el = document.querySelector(selector) as Element;
-    if (!$el) throw new Error("Le sélecteur " + selector + " est introuvable.");
-  }
-
-  if (
-    $el.nodeType === Node.COMMENT_NODE ||
-    $el.nodeType === Node.TEXT_NODE
-  ) {
+  if (!isValidNodeTypeForScript($observe_el)) {
     return;
   }
 
-  [$el, ...Array.from((<Element> $el).querySelectorAll("*"))]
-    .forEach(($el) => {
-      createObserver($el);
-      applyStyle($el.classList);
-    });
+  if (!stateConfig.initialized) {
+    stateConfig.initialized = true;
+    stateConfig.options = {
+      ...stateConfig.options,
+      ...options,
+    };
+    stateConfig.$style = $style;
+  }
+
+  let $elements = [$observe_el];
+  if (stateConfig.options?.children) {
+    $elements = [
+      ...$elements,
+      ...Array.from((<Element> $observe_el).querySelectorAll("*")),
+    ];
+  }
+
+  $elements.forEach(applyStyle);
+  $elements.forEach(createObserver);
 }
-
-const createObserver = ($el: HTMLElement | Node) => {
-  const observer = new MutationObserver(function (entries) {
-    entries.forEach((entry) => {
-      if (entry.addedNodes.length > 0) {
-        entry.addedNodes.forEach((el) => setStyle(<HTMLElement> el));
-        return;
-      }
-
-      applyStyle((<HTMLElement> entry.target).classList);
-    });
-  });
-
-  observer.observe($el, {
-    attributeFilter: ["class"],
-    attributes: true,
-    childList: true,
-  });
-};
-
-const applyStyle = (classList: DOMTokenList) => {
-  const _test = (className: string, rule: RulesStylesheet) => {
-    const $$1 = escapeSelector(className, [".", "%"]);
-    const $$2 = rule.selector.slice(1);
-    const userData = $$1.split(testRegexify($$2)).filter(Boolean);
-
-    const fakeElement = document.createElement("div");
-
-    const data = [];
-    for (let i = 0; i < rule.types.length; i++) {
-      const type = rule.types[i];
-      const value = userData[i];
-
-      let temp: string | number;
-      switch (type) {
-        case "color":
-          temp = escapeSelector(value);
-          fakeElement.style.color = temp;
-          if (fakeElement.style.color) {
-            data.push(temp);
-          }
-          break;
-        case "number":
-          if (value.startsWith(".")) {
-            temp = "." + parseInt(value.slice(1), 10);
-          } else {
-            temp = parseInt(value, 10);
-          }
-
-          data.push(temp);
-          break;
-        case "length":
-          temp = escapeSelector(value);
-          fakeElement.style.fontSize = temp;
-          if (fakeElement.style.fontSize) {
-            data.push(temp);
-          }
-          break;
-        case "percentage":
-          temp = escapeSelector(value, ["%"]);
-          fakeElement.style.fontSize = temp;
-          if (fakeElement.style.fontSize) {
-            data.push(temp);
-          }
-          break;
-        default:
-          console.warn(type);
-      }
-    }
-
-    if (data.length === 0) return;
-
-    // Dans le cas où deux types sont obligatoires
-    // mais que un ou plusieurs valeurs sont mauvaises:
-    if (userData.length > data.length) return;
-
-    const injectData = new Function("data", `return ${rule.body}`);
-
-    let stylesheet = [
-      ".",
-      escapeSelector(className),
-      rule.state.length ? ":" + (rule.state.join(":")) : "",
-      "{",
-      injectData(data),
-      "}",
-    ].join("");
-
-    const $styleElement = document.querySelector("#custom-css");
-    if ($styleElement!.textContent!.indexOf(stylesheet) >= 0) {
-      return;
-    }
-
-    const $styleMQElement = document.querySelector("#mq-custom-css");
-
-    $styleElement!.textContent += "\n" + stylesheet;
-
-    const stylesheetForMQ = stylesheet.slice(1);
-
-    const stylesheetForMQMapper = Object.keys(customMediaQueries).map((_mq) => {
-      const values = customMediaQueries[_mq];
-      const [mqrule, ...rules] = _mq.split(/(@)/);
-
-      const rule = mqrule + stylesheetForMQ;
-      if (!values.includes(rule)) {
-        customMediaQueries[_mq].push(mqrule + stylesheetForMQ);
-      }
-
-      let stylesheetMQ = [
-        rules.join(""),
-        "{",
-        customMediaQueries[_mq].join("\n"),
-        "}",
-      ];
-
-      return stylesheetMQ.join("\n");
-    });
-
-    $styleMQElement!.textContent = "\n" + stylesheetForMQMapper.join("\n");
-  };
-
-  const _buildStyle = (
-    className: string,
-    rule: [string, RulesStylesheet[]],
-  ) => {
-    for (let i = 0; i < rule[1].length; i++) {
-      _test(className, rule[1][i]);
-    }
-  };
-
-  if (classList.length === 0) {
-    return;
-  }
-
-  for (let i = 0; i < classList.length; i++) {
-    let className = classList[i];
-    if (className.length === 1) continue;
-
-    className = className.replace(/^\*?(xs|sm|md|lg|xxl|xl|s4K)\*?:/, "");
-
-    if (_rulesInUse.includes(className)) {
-      continue;
-    }
-
-    for (const rule of _rules) {
-      if (iswmcs("." + className, rule[0])) {
-        _rulesInUse.push(className);
-        _buildStyle(className, rule);
-        break;
-      }
-    }
-  }
-};
