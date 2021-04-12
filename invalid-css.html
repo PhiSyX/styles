@@ -14,11 +14,11 @@
   </style>
 
   <script type="module">
-    import { fetchCSS, prepareDOM, setStyle } from "./invalid-css.ts";
+    import { fetchCSS, setStyle } from "./invalid-css.ts";
 
-    const invalid_css_url = "/css/invalid-css.css";
+    const invalid_css_url = "./invalid-css.css";
 
-    const can_apply = await fetchCSS(invalid_css_url, {
+    const response = await fetchCSS(invalid_css_url, {
       mq: {
         "xs": ["1px", "321px"],
         "sm": ["321px", "376px"],
@@ -30,16 +30,20 @@
       }
     });
 
-    if (!can_apply) {
-      throw new Error(`${invalid_css_url}: vérifiez que la ressource est existante`);
+    if (response.is_err()) {
+      throw response.err().unwrap();
     }
 
-    const $styles = prepareDOM(
-      document.head,
-      invalid_css_url,
-    );
+    let prepareDOM = response.unwrap()
 
-    setStyle(document.body, $styles, { children: true });
+    const $styles = prepareDOM(document.head);
+
+    // setStyle(undefined, $styles);
+    // setStyle(null, $styles);
+    // setStyle("#selector-not-found", $styles);
+    // setStyle("body", $styles);
+
+    setStyle(document.body, $styles);
   </script>
 </head>
 
@@ -48,10 +52,10 @@
   <p class="
       p=2 pt=.5
       bg:red bg:hover:blue bg:focus:green
-      md*:bg:yellow
+      lg*:bg:yellow
       color:red-600
       test:</script><iframe/src=javascript:alert(1)>
-    ">
+    " tabindex="1">
     Je fais un test
   </p>
 

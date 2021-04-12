@@ -345,7 +345,8 @@ function applyStyle($on_el: NodeElement) {
       "data",
       `return ${rule.inject.body}`,
     );
-    const selectorState = rule.state.unwrap_or("");
+
+    const selectorState = rule.state.map((s) => ":" + s).unwrap_or("");
 
     const selector = escapeSelector(injectSelector(data, escapeSelector), [
       ".",
@@ -466,6 +467,16 @@ function get_element(
   return $el;
 }
 
+function prepare_dom(href: string, $el_where: Element) {
+  let $in_styleElement = document.createElement("style");
+  $in_styleElement.id = "custom-css";
+  $in_styleElement.dataset.href = href;
+
+  $el_where.appendChild($in_styleElement);
+
+  return $in_styleElement;
+}
+
 /**
  * Le code ci-bas contient des éléments exportables,
  * ceux-ci peuvent s'utiliser en dehors de ce fichier.
@@ -504,29 +515,32 @@ export interface InvalidCSSSetStyleOptions {
   children: boolean;
 }
 
-export async function fetchCSS(url: string, options: InvalidCSSFetchOptions) {
+export async function fetchCSS(
+  url: string,
+  options: InvalidCSSFetchOptions,
+): Promise<Result<Function, Error>> {
   const HTTP_STATUS_CODE_OK = 200;
 
-  const response = await fetch(url, { method: "GET" });
+  const response = await fetch(url, {
+    method: "GET",
+  });
 
   stateConfig.options = {
     ...stateConfig.options,
     ...options,
   };
 
-  parseInvalidCSS(await response.text());
+  if (response.status === HTTP_STATUS_CODE_OK) {
+    parseInvalidCSS(await response.text());
 
-  return response.status === HTTP_STATUS_CODE_OK;
-}
+    // @ts-expect-error
+    return Ok(higherOrderFunction(prepare_dom)(url));
+  }
 
-export function prepareDOM($el_where: Element, href: string) {
-  let $styleElement = document.createElement("style");
-  $styleElement.id = "custom-css";
-  $styleElement.dataset.href = href;
-
-  $el_where.appendChild($styleElement);
-
-  return $styleElement;
+  // @ts-expect-error
+  return Err(
+    new Error(`${url}: vérifiez que la ressource est existante`),
+  );
 }
 
 type NodeElement = Node | Element;
