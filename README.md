@@ -17,8 +17,9 @@
   - Projet existant **avec** git d'initialisé ?
 
     > $   git submodule add https://github.com/PhiSyX/styles **PROJECT_TARGET**
-    > > **PROJECT_TARGET**  "/mon/super/projet/personnel/styles"
-
+    > > **PROJECT_TARGET**  "/mon/super/projet/personnel/styles" 
+    >
+    > $ git submodule update --init --recursive
 
 
 ## Utiliser ce code pour les autres projets ?
